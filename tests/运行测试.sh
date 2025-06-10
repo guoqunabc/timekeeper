@@ -16,7 +16,7 @@ CURRENT_DIR=$(pwd)
 check_files() {
     echo "🔍 检查必要文件..."
     
-    local files=("计时器.html" "Timer.js" "会议议程配置.js")
+    local files=("../计时器.html" "../src/Timer.js" "../会议议程配置.js")
     local missing_files=()
     
     for file in "${files[@]}"; do
