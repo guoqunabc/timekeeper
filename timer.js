@@ -476,27 +476,7 @@ class Timer {
 
 
 
-    // 格式化时间显示
-    formatTime(minutes, seconds) {
-        const m = Math.max(0, minutes || 0);
-        const s = Math.max(0, Math.min(59, seconds || 0));
-        return `${m}分${s.toString().padStart(2, '0')}秒`;
-    }
-
 }
 
 // 初始化计时器
-const timer = new Timer();
-
-document.addEventListener('DOMContentLoaded', function() {
-    // 处理待计时列表点击事件
-    const upcomingItems = document.querySelectorAll('.upcoming-item');
-    upcomingItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const minutes = parseInt(this.getAttribute('data-minutes'));
-            document.getElementById('minutes').value = minutes;
-            document.getElementById('seconds').value = '00';
-            document.getElementById('speakerName').value = this.textContent.split(' - ')[0];
-        });
-    });
-}); 
+const timer = new Timer(); 

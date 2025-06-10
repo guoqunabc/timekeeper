@@ -96,6 +96,9 @@ time_keeper/
 ├── timer.js           # 核心功能代码
 ├── config.js          # 配置文件（预设演讲者）
 ├── config.example.js  # 空配置示例
+├── fonts/             # 本地字体文件（保证多端一致性）
+│   ├── Arial.ttf      # 界面字体
+│   └── DINPro-Regular.otf  # 计时器专用字体
 └── README.md          # 说明文档
 ```
 
@@ -104,6 +107,7 @@ time_keeper/
 - ✅ **即开即用**：双击HTML文件直接运行
 - ✅ **配置简单**：修改JS文件即可自定义
 - ✅ **跨平台**：任何现代浏览器都支持
+- ✅ **字体一致性**：内置本地字体文件，保证不同设备显示效果一致
 
 ## License
 
