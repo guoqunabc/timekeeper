@@ -16,7 +16,7 @@ CURRENT_DIR=$(pwd)
 check_files() {
     echo "🔍 检查必要文件..."
     
-    local files=("index.html" "timer.js" "config.js")
+    local files=("计时器.html" "计时器.js" "配置.js")
     local missing_files=()
     
     for file in "${files[@]}"; do
@@ -40,15 +40,15 @@ run_compatibility_test() {
     
     if command -v open &> /dev/null; then
         # macOS
-        open "test-compatibility.html"
+        open "兼容性测试.html"
     elif command -v xdg-open &> /dev/null; then
         # Linux
-        xdg-open "test-compatibility.html"
+        xdg-open "兼容性测试.html"
     elif command -v start &> /dev/null; then
         # Windows
-        start "test-compatibility.html"
+        start "兼容性测试.html"
     else
-        echo "请手动在浏览器中打开: test-compatibility.html"
+        echo "请手动在浏览器中打开: 兼容性测试.html"
     fi
     
     echo "✅ 兼容性测试页面已打开"
@@ -63,15 +63,15 @@ run_automated_test() {
     
     if command -v open &> /dev/null; then
         # macOS
-        open "test-simple.html"
+        open "自动化测试.html"
     elif command -v xdg-open &> /dev/null; then
         # Linux
-        xdg-open "test-simple.html"
+        xdg-open "自动化测试.html"
     elif command -v start &> /dev/null; then
         # Windows
-        start "test-simple.html"
+        start "自动化测试.html"
     else
-        echo "请手动在浏览器中打开: test-simple.html"
+        echo "请手动在浏览器中打开: 自动化测试.html"
     fi
     
     echo "✅ 自动化测试页面已打开"
