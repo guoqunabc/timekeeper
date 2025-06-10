@@ -55,12 +55,7 @@
 
 ### 本地运行
 
-1. 克隆仓库
-```bash
-git clone https://github.com/你的用户名/Timer_Pikachu.git
-```
-
-2. 使用浏览器打开 index.html 文件即可运行
+确保下载项目所有文件，使用浏览器打开 index.html 文件即可运行
 
 ## License
 
