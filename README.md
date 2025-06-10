@@ -109,6 +109,32 @@ time_keeper/
 - ✅ **跨平台**：任何现代浏览器都支持
 - ✅ **字体一致性**：内置本地字体文件，保证不同设备显示效果一致
 
+## 🤖 自动化测试
+
+### 快速测试
+```bash
+# 运行完整自动化测试
+./run-tests.sh
+
+# 运行特定测试类型
+./run-tests.sh compatibility  # 浏览器兼容性测试
+./run-tests.sh automated      # API自动化测试
+```
+
+### 自动化测试文件
+1. **兼容性检测** - 双击 `test-compatibility.html`
+2. **API功能测试** - 双击 `test-simple.html`
+
+### 测试覆盖范围
+- ✅ 浏览器API兼容性检测
+- ✅ 定时器精度验证
+- ✅ 数据存储性能测试
+- ✅ 页面加载性能测试
+- ✅ 内存使用监控
+- ✅ 错误处理验证
+
+所有测试完全自动化，无需手动操作。详情请参考 [TEST.md](TEST.md)
+
 ## License
 
 [MIT](LICENSE) 

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeKeeper 兼容性测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .pass { background: #004d00; }
+        .fail { background: #4d0000; }
+        .unknown { background: #4d4d00; }
+        h1, h2 { color: #ffcc00; }
+    </style>
+</head>
+<body>
+    <h1>🧪 TimeKeeper 兼容性测试报告</h1>
+    
+    <h2>浏览器信息</h2>
+    <div id="browserInfo"></div>
+    
+    <h2>关键功能支持检测</h2>
+    <div id="featureTests"></div>
+    
+    <h2>性能测试</h2>
+    <div id="performanceTests"></div>
+    
+    <script>
+        // 浏览器信息检测
+        function detectBrowser() {
+            const info = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine
+            };
+            
+            document.getElementById('browserInfo').innerHTML = `
+                <div class="test-item pass">
+                    <strong>User Agent:</strong> ${info.userAgent}<br>
+                    <strong>平台:</strong> ${info.platform}<br>
+                    <strong>语言:</strong> ${info.language}<br>
+                    <strong>Cookie支持:</strong> ${info.cookieEnabled ? '✅' : '❌'}<br>
+                    <strong>在线状态:</strong> ${info.onLine ? '✅' : '❌'}
+                </div>
+            `;
+        }
+        
+        // 功能支持检测
+        function runFeatureTests() {
+            const tests = [
+                {
+                    name: 'localStorage 支持',
+                    test: () => {
+                        try {
+                            localStorage.setItem('test', 'value');
+                            localStorage.removeItem('test');
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                },
+                {
+                    name: 'setInterval/clearInterval 支持',
+                    test: () => typeof setInterval === 'function' && typeof clearInterval === 'function'
+                },
+                {
+                    name: 'Date.now() 支持',
+                    test: () => typeof Date.now === 'function'
+                },
+                {
+                    name: 'JSON 支持',
+                    test: () => typeof JSON === 'object' && typeof JSON.parse === 'function'
+                },
+                {
+                    name: 'addEventListener 支持',
+                    test: () => typeof document.addEventListener === 'function'
+                },
+                {
+                    name: 'querySelector 支持',
+                    test: () => typeof document.querySelector === 'function'
+                },
+                {
+                    name: 'classList 支持',
+                    test: () => {
+                        const div = document.createElement('div');
+                        return typeof div.classList === 'object';
+                    }
+                },
+                {
+                    name: 'CSS 动画支持',
+                    test: () => {
+                        const div = document.createElement('div');
+                        return 'animation' in div.style || 'webkitAnimation' in div.style;
+                    }
+                },
+                {
+                    name: 'Blob 和 URL.createObjectURL 支持（CSV导出需要）',
+                    test: () => typeof Blob === 'function' && typeof URL.createObjectURL === 'function'
+                }
+            ];
+            
+            let html = '';
+            tests.forEach(test => {
+                try {
+                    const result = test.test();
+                    const status = result ? 'pass' : 'fail';
+                    const icon = result ? '✅' : '❌';
+                    html += `<div class="test-item ${status}">${icon} ${test.name}</div>`;
+                } catch (e) {
+                    html += `<div class="test-item fail">❌ ${test.name} (错误: ${e.message})</div>`;
+                }
+            });
+            
+            document.getElementById('featureTests').innerHTML = html;
+        }
+        
+        // 性能测试
+        function runPerformanceTests() {
+            const tests = [
+                {
+                    name: '定时器精度测试',
+                    test: () => {
+                        return new Promise((resolve) => {
+                            const start = Date.now();
+                            setTimeout(() => {
+                                const end = Date.now();
+                                const diff = Math.abs((end - start) - 1000);
+                                resolve(`延迟: ${diff}ms ${diff < 100 ? '✅' : '⚠️'}`);
+                            }, 1000);
+                        });
+                    }
+                },
+                {
+                    name: 'DOM 操作性能',
+                    test: () => {
+                        const start = performance.now();
+                        for (let i = 0; i < 1000; i++) {
+                            const div = document.createElement('div');
+                            div.textContent = `测试元素 ${i}`;
+                        }
+                        const end = performance.now();
+                        const time = (end - start).toFixed(2);
+                        return Promise.resolve(`创建1000个元素耗时: ${time}ms ${time < 100 ? '✅' : '⚠️'}`);
+                    }
+                },
+                {
+                    name: 'localStorage 读写性能',
+                    test: () => {
+                        const start = performance.now();
+                        const testData = JSON.stringify(Array(1000).fill().map((_, i) => ({
+                            id: i,
+                            name: `测试记录${i}`,
+                            time: Date.now()
+                        })));
+                        
+                        localStorage.setItem('performanceTest', testData);
+                        const retrieved = localStorage.getItem('performanceTest');
+                        const parsed = JSON.parse(retrieved);
+                        localStorage.removeItem('performanceTest');
+                        
+                        const end = performance.now();
+                        const time = (end - start).toFixed(2);
+                        return Promise.resolve(`1000条记录读写耗时: ${time}ms ${time < 50 ? '✅' : '⚠️'}`);
+                    }
+                }
+            ];
+            
+            const container = document.getElementById('performanceTests');
+            container.innerHTML = '<div class="test-item unknown">🔄 性能测试进行中...</div>';
+            
+            Promise.all(tests.map(async test => {
+                try {
+                    const result = await test.test();
+                    return `<div class="test-item pass">📊 ${test.name}: ${result}</div>`;
+                } catch (e) {
+                    return `<div class="test-item fail">❌ ${test.name}: 错误 ${e.message}</div>`;
+                }
+            })).then(results => {
+                container.innerHTML = results.join('');
+            });
+        }
+        
+        // 运行所有测试
+        detectBrowser();
+        runFeatureTests();
+        runPerformanceTests();
+        
+        // 添加刷新按钮
+        document.body.insertAdjacentHTML('beforeend', `
+            <div style="margin-top: 20px;">
+                <button onclick="location.reload()" style="padding: 10px 20px; background: #ffcc00; color: black; border: none; border-radius: 5px; cursor: pointer;">
+                    🔄 重新测试
+                </button>
+                <button onclick="window.open('index.html')" style="padding: 10px 20px; background: #007acc; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                    🚀 打开 TimeKeeper
+                </button>
+            </div>
+        `);
+    </script>
+</body>
+</html> 

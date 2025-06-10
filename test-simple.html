@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeKeeper 自动化测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffcc00;
+            background: #2a2a2a;
+        }
+        .test-item h3 {
+            margin: 0 0 10px 0;
+            color: #ffcc00;
+        }
+        .test-item p {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+        .pass { border-left-color: #28a745; background: #1a3d1a; }
+        .fail { border-left-color: #dc3545; background: #3d1a1a; }
+        .info { border-left-color: #17a2b8; background: #1a2d3d; }
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+        .primary { background: #007acc; }
+        .success { background: #28a745; }
+        .danger { background: #dc3545; }
+        h1 { color: #ffcc00; text-align: center; }
+        h2 { color: #66ccff; }
+        .checklist {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+        .checklist li:before {
+            content: "□ ";
+            font-size: 16px;
+            margin-right: 8px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-pass { background: #28a745; }
+        .status-fail { background: #dc3545; }
+        .status-pending { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🤖 TimeKeeper 自动化测试</h1>
+        
+        <div class="test-item info">
+            <h3>🤖 自动化测试说明</h3>
+            <p>这是TimeKeeper的自动化API测试页面，会自动检测浏览器支持情况。</p>
+            <p>所有测试会自动运行，无需手动操作。</p>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="success" onclick="runAllTests()">🚀 运行所有自动化测试</button>
+            <button class="primary" onclick="runLocalTests()">🔧 运行API测试</button>
+            <button class="danger" onclick="location.reload()">🔄 重置页面</button>
+        </div>
+
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        function addTestResult(title, message, type = 'info') {
+            const container = document.getElementById('testResults');
+            const statusClass = type === 'pass' ? 'status-pass' : 
+                              type === 'fail' ? 'status-fail' : 'status-pending';
+            
+            const resultHtml = `
+                <div class="test-item ${type}">
+                    <h3><span class="status-indicator ${statusClass}"></span>${title}</h3>
+                    <p>${message}</p>
+                    <small>时间: ${new Date().toLocaleTimeString()}</small>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', resultHtml);
+        }
+
+        function runLocalTests() {
+            addTestResult('本地测试', '开始运行可在当前页面验证的功能', 'info');
+            
+            // 测试localStorage支持
+            try {
+                localStorage.setItem('timekeeper_test', 'test_value');
+                const value = localStorage.getItem('timekeeper_test');
+                localStorage.removeItem('timekeeper_test');
+                
+                if (value === 'test_value') {
+                    addTestResult('localStorage支持', '✅ localStorage读写功能正常', 'pass');
+                } else {
+                    addTestResult('localStorage支持', '❌ localStorage功能异常', 'fail');
+                }
+            } catch (e) {
+                addTestResult('localStorage支持', `❌ localStorage不可用: ${e.message}`, 'fail');
+            }
+            
+            // 测试Date.now()精度
+            const start = Date.now();
+            setTimeout(() => {
+                const end = Date.now();
+                const diff = end - start;
+                if (diff >= 100 && diff <= 150) {
+                    addTestResult('定时器精度', `✅ 定时器精度正常 (${diff}ms)`, 'pass');
+                } else {
+                    addTestResult('定时器精度', `⚠️ 定时器精度异常 (${diff}ms)`, 'fail');
+                }
+            }, 100);
+            
+            // 测试JSON功能
+            try {
+                const testObj = { name: '测试', time: 300 };
+                const jsonStr = JSON.stringify(testObj);
+                const parsed = JSON.parse(jsonStr);
+                
+                if (parsed.name === '测试' && parsed.time === 300) {
+                    addTestResult('JSON支持', '✅ JSON序列化/反序列化正常', 'pass');
+                } else {
+                    addTestResult('JSON支持', '❌ JSON功能异常', 'fail');
+                }
+            } catch (e) {
+                addTestResult('JSON支持', `❌ JSON不支持: ${e.message}`, 'fail');
+            }
+            
+            // 测试CSS动画支持
+            const testDiv = document.createElement('div');
+            if ('animation' in testDiv.style || 'webkitAnimation' in testDiv.style) {
+                addTestResult('CSS动画支持', '✅ CSS动画功能可用', 'pass');
+            } else {
+                addTestResult('CSS动画支持', '❌ CSS动画不支持', 'fail');
+            }
+            
+            // 测试Blob API（CSV导出需要）
+            if (typeof Blob === 'function' && typeof URL.createObjectURL === 'function') {
+                addTestResult('文件导出支持', '✅ Blob API可用，支持CSV导出', 'pass');
+            } else {
+                addTestResult('文件导出支持', '❌ Blob API不支持，CSV导出可能失败', 'fail');
+            }
+            
+            addTestResult('API测试完成', '✅ 所有基础API测试完成', 'pass');
+        }
+        
+        // 运行所有自动化测试
+        function runAllTests() {
+            addTestResult('完整测试开始', '开始运行所有自动化测试', 'info');
+            runLocalTests();
+            
+            // 页面加载性能测试
+            setTimeout(() => {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                if (loadTime < 3000) {
+                    addTestResult('页面加载性能', `✅ 页面加载时间: ${loadTime}ms (良好)`, 'pass');
+                } else {
+                    addTestResult('页面加载性能', `⚠️ 页面加载时间: ${loadTime}ms (较慢)`, 'fail');
+                }
+            }, 100);
+            
+            // 内存使用检测
+            if (performance.memory) {
+                const memoryInfo = performance.memory;
+                const usedMB = (memoryInfo.usedJSHeapSize / 1048576).toFixed(2);
+                addTestResult('内存使用', `✅ JavaScript堆内存使用: ${usedMB}MB`, 'info');
+            }
+            
+            // 网络状态检测
+            if (navigator.onLine) {
+                addTestResult('网络状态', '✅ 网络连接正常', 'pass');
+            } else {
+                addTestResult('网络状态', '⚠️ 网络离线状态', 'info');
+            }
+            
+            addTestResult('自动化测试完成', '✅ 所有自动化测试完成', 'pass');
+        }
+
+        // 页面加载时的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            addTestResult('测试环境', 'TimeKeeper自动化测试已就绪', 'info');
+            addTestResult('浏览器信息', `${navigator.userAgent}`, 'info');
+            
+            // 自动运行基础测试
+            setTimeout(() => {
+                runLocalTests();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

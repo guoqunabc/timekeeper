@@ -479,4 +479,4 @@ class Timer {
 }
 
 // 初始化计时器
-const timer = new Timer(); 
+const timer = new Timer();
