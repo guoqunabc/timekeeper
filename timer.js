@@ -1,3 +1,6 @@
+// ========== TimeKeeper 主程序 ==========
+// 配置已移至 config.js 文件，保持代码结构清晰
+
 class Timer {
     constructor() {
         this.timeLeft = 0;
@@ -9,6 +12,11 @@ class Timer {
         this.intervalId = null;
         this.pauseTime = null;
         this.overtimeStart = null;
+
+        // 议程相关
+        this.agendaSpeakers = [];
+        this.currentSpeakerIndex = 0;
+        this.isAgendaMode = false;
 
         this.timerElement = document.getElementById('timer');
         this.startBtn = document.getElementById('startBtn');
@@ -26,6 +34,7 @@ class Timer {
         this.initializeEventListeners();
         this.updateRecordList(); // 初始化时显示已保存的记录
         this.setupRecordControls(); // 设置记录控制按钮
+        this.initializeAgenda(); // 初始化议程
 
         this.keydownHandler = this.handleKeydown.bind(this);
     }
@@ -242,6 +251,11 @@ class Timer {
         this.saveRecords(); // 保存到localStorage
         this.updateRecordList();
         this.reset();
+        
+        // 议程模式下自动切换到下一位演讲者
+        if (this.isAgendaMode) {
+            this.autoNextSpeaker();
+        }
     }
 
     reset() {
@@ -269,16 +283,18 @@ class Timer {
         this.updateButtonStates();
         this.updateDisplay();
         
-        // 清空演讲者输入框
-        this.speakerNameInput.value = '';
+        // 清空演讲者输入框（非议程模式）
+        if (!this.isAgendaMode) {
+            this.speakerNameInput.value = '';
+        }
     }
 
     updateButtonStates() {
         this.startBtn.disabled = this.isRunning;
         this.stopBtn.disabled = !this.isRunning;
-        this.minutesInput.disabled = this.isRunning;
-        this.secondsInput.disabled = this.isRunning;
-        this.speakerNameInput.disabled = this.isRunning;
+        this.minutesInput.disabled = this.isRunning || this.isAgendaMode;
+        this.secondsInput.disabled = this.isRunning || this.isAgendaMode;
+        this.speakerNameInput.disabled = this.isRunning || this.isAgendaMode;
     }
 
     updateRecordList() {
@@ -389,6 +405,82 @@ class Timer {
                 this.clearAllRecords();
             });
         }
+    }
+
+    // 初始化议程模式
+    initializeAgenda() {
+        const config = window.TIMEKEEPER_CONFIG;
+        if (config && config.speakers && Array.isArray(config.speakers) && config.speakers.length > 0) {
+            this.agendaSpeakers = config.speakers;
+            this.isAgendaMode = true;
+            this.setupAgendaMode();
+        } else {
+            this.isAgendaMode = false;
+        }
+    }
+
+    // 设置议程模式
+    setupAgendaMode() {
+        // 设置第一个演讲者
+        this.setCurrentSpeaker(0);
+    }
+
+    // 设置当前演讲者
+    setCurrentSpeaker(index) {
+        if (!this.isAgendaMode || index < 0 || index >= this.agendaSpeakers.length) {
+            return;
+        }
+
+        this.currentSpeakerIndex = index;
+        const speaker = this.agendaSpeakers[index];
+        
+        // 更新输入框
+        this.speakerNameInput.value = speaker.name;
+        this.minutesInput.value = speaker.minutes || 0;
+        this.secondsInput.value = (speaker.seconds || 0).toString().padStart(2, '0');
+    }
+
+
+
+    // 自动进入下一位演讲者
+    autoNextSpeaker() {
+        if (this.isAgendaMode) {
+            if (this.currentSpeakerIndex < this.agendaSpeakers.length - 1) {
+                // 还有下一位演讲者，自动切换
+                setTimeout(() => {
+                    this.setCurrentSpeaker(this.currentSpeakerIndex + 1);
+                }, 1000); // 1秒后自动切换到下一位
+            } else {
+                // 议程全部完成，回到普通模式
+                setTimeout(() => {
+                    this.exitAgendaMode();
+                }, 1000); // 1秒后退出议程模式
+            }
+        }
+    }
+
+    // 退出议程模式，回到普通模式
+    exitAgendaMode() {
+        this.isAgendaMode = false;
+        this.currentSpeakerIndex = 0;
+        this.agendaSpeakers = [];
+        
+        // 清空输入框，恢复普通模式
+        this.speakerNameInput.value = '';
+        this.minutesInput.value = '10';
+        this.secondsInput.value = '00';
+        
+        // 恢复输入框的可编辑状态
+        this.updateButtonStates();
+    }
+
+
+
+    // 格式化时间显示
+    formatTime(minutes, seconds) {
+        const m = Math.max(0, minutes || 0);
+        const s = Math.max(0, Math.min(59, seconds || 0));
+        return `${m}分${s.toString().padStart(2, '0')}秒`;
     }
 
 }
