@@ -14,3 +14,6 @@
 
 # Logs
 *.txt
+
+# Data
+/配置
