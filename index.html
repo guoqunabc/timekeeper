@@ -827,6 +827,39 @@
         padding: 8px;
         background: rgba(255, 255, 255, 0.05);
       }
+
+      /* ========== 语言切换按钮样式 ========== */
+      .lang-toggle-btn {
+        position: fixed;
+        top: 74px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+        background: rgba(50, 50, 50, 0.8);
+        border: 1px solid #555;
+        border-radius: 50%;
+        color: #aaa;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        font-weight: bold;
+      }
+
+      .lang-toggle-btn:hover {
+        background: rgba(70, 70, 70, 0.9);
+        color: #fff;
+        transform: scale(1.1);
+      }
+
+      .lang-toggle-btn.active {
+        background: rgba(76, 175, 80, 0.9);
+        color: #fff;
+      }
     </style>
   </head>
   <body>
@@ -891,6 +924,10 @@
     <!-- 配置面板 -->
     <button class="config-toggle-btn" id="configToggleBtn" title="议程配置">
       ⚙
+    </button>
+    <!-- 语言切换按钮 -->
+    <button class="lang-toggle-btn" id="langToggleBtn" title="切换语言">
+      中
     </button>
     <div class="config-panel-overlay" id="configPanelOverlay"></div>
     <div class="config-panel" id="configPanel">
@@ -1538,7 +1575,165 @@
 
         // 初始化议程管理器
         window.agendaManager = new AgendaManager();
+
+        // 初始化语言切换功能
+        initLanguageToggle();
       });
+
+      // ========== 语言切换功能 ==========
+      function initLanguageToggle() {
+        const langBtn = document.getElementById("langToggleBtn");
+        let currentLang = localStorage.getItem("language") || "zh";
+
+        // 语言配置
+        const translations = {
+          zh: {
+            speakerPlaceholder: "演讲者",
+            minutesPlaceholder: "分",
+            secondsPlaceholder: "秒",
+            startBtn: "开始",
+            stopBtn: "停止",
+            recordsTitle: "演讲时间记录",
+            exportBtn: "导出",
+            clearBtn: "清空",
+            confirmStop: "确定结束计时吗？",
+            confirmYes: "确定",
+            confirmNo: "取消",
+            configTitle: "📋 会议议程配置",
+            addSpeaker: "+ 添加演讲者",
+            dragHint: "支持拖拽 .csv / .json 文件至此区域直接导入",
+            importBtn: "导入",
+            exportAgendaBtn: "导出",
+            clearAgendaBtn: "清空",
+            applyBtn: "保存并应用",
+            exportDialogTitle: "请选择导出格式",
+            exportJson: "JSON (备份)",
+            exportCsv: "CSV (Excel)",
+            exportCancel: "取消",
+            namePlaceholder: "姓名",
+            minuteLabel: "分",
+            secondLabel: "秒",
+            emptyHint1: "暂无演讲者",
+            emptyHint2: "点击下方按钮添加演讲者",
+            langBtn: "中",
+            langTitle: "切换语言",
+            configBtnTitle: "议程配置",
+          },
+          en: {
+            speakerPlaceholder: "Speaker",
+            minutesPlaceholder: "Min",
+            secondsPlaceholder: "Sec",
+            startBtn: "Start",
+            stopBtn: "Stop",
+            recordsTitle: "Speaking Records",
+            exportBtn: "Export",
+            clearBtn: "Clear",
+            confirmStop: "Confirm to stop timing?",
+            confirmYes: "Yes",
+            confirmNo: "No",
+            configTitle: "📋 Agenda Config",
+            addSpeaker: "+ Add Speaker",
+            dragHint: "Drag .csv / .json file here to import",
+            importBtn: "Import",
+            exportAgendaBtn: "Export",
+            clearAgendaBtn: "Clear",
+            applyBtn: "Save & Apply",
+            exportDialogTitle: "Select Export Format",
+            exportJson: "JSON (Backup)",
+            exportCsv: "CSV (Excel)",
+            exportCancel: "Cancel",
+            namePlaceholder: "Name",
+            minuteLabel: "min",
+            secondLabel: "sec",
+            emptyHint1: "No speakers yet",
+            emptyHint2: "Click below to add speakers",
+            langBtn: "EN",
+            langTitle: "Switch Language",
+            configBtnTitle: "Agenda Config",
+          },
+        };
+
+        // 应用语言
+        function applyLanguage(lang) {
+          const t = translations[lang];
+          document.getElementById("speakerName").placeholder =
+            t.speakerPlaceholder;
+          document.getElementById("minutes").placeholder = t.minutesPlaceholder;
+          document.getElementById("seconds").placeholder = t.secondsPlaceholder;
+          document.getElementById("startBtn").textContent = t.startBtn;
+          document.getElementById("stopBtn").textContent = t.stopBtn;
+          document.querySelector(".records-title h2").textContent =
+            t.recordsTitle;
+          document.querySelector(".export-btn").textContent = t.exportBtn;
+          document.querySelector(".clear-btn").textContent = t.clearBtn;
+          document.querySelector(".confirm-dialog p").textContent =
+            t.confirmStop;
+          document.getElementById("confirmYes").textContent = t.confirmYes;
+          document.getElementById("confirmNo").textContent = t.confirmNo;
+          document.querySelector(".config-panel-header h3").textContent =
+            t.configTitle;
+          document.getElementById("addSpeakerBtn").textContent = t.addSpeaker;
+          document.querySelector(".drag-hint").textContent = t.dragHint;
+          document.getElementById("importAgendaBtn").textContent = t.importBtn;
+          document.getElementById("exportAgendaBtn").textContent =
+            t.exportAgendaBtn;
+          document.getElementById("clearAgendaBtn").textContent =
+            t.clearAgendaBtn;
+          document.getElementById("applyAgendaBtn").textContent = t.applyBtn;
+          document.querySelector("#exportDialog p").textContent =
+            t.exportDialogTitle;
+          document.getElementById("exportJsonBtn").textContent = t.exportJson;
+          document.getElementById("exportCsvBtn").textContent = t.exportCsv;
+          document.getElementById("exportCancelBtn").textContent =
+            t.exportCancel;
+          langBtn.textContent = t.langBtn;
+          langBtn.title = t.langTitle;
+          document.getElementById("configToggleBtn").title = t.configBtnTitle;
+          document.documentElement.lang = lang;
+
+          // 更新配置面板中的标签（如果已渲染）
+          const speakerLabels = document.querySelectorAll(
+            ".speaker-time-label",
+          );
+          speakerLabels.forEach((label, index) => {
+            label.textContent = index % 2 === 0 ? t.minuteLabel : t.secondLabel;
+          });
+
+          // 更新空状态提示
+          const emptyHint = document.querySelector(".empty-speakers-hint");
+          if (emptyHint) {
+            emptyHint.innerHTML = `
+              <p>${t.emptyHint1}</p>
+              <p>${t.emptyHint2}</p>
+            `;
+          }
+
+          // 更新输入框的 placeholder
+          const nameInputs = document.querySelectorAll(".speaker-name-input");
+          nameInputs.forEach((input) => {
+            input.placeholder = t.namePlaceholder;
+          });
+        }
+
+        // 切换语言
+        function toggleLanguage() {
+          currentLang = currentLang === "zh" ? "en" : "zh";
+          localStorage.setItem("language", currentLang);
+          applyLanguage(currentLang);
+
+          // 添加激活动画
+          langBtn.classList.add("active");
+          setTimeout(() => {
+            langBtn.classList.remove("active");
+          }, 300);
+        }
+
+        // 初始化语言
+        applyLanguage(currentLang);
+
+        // 绑定点击事件
+        langBtn.addEventListener("click", toggleLanguage);
+      }
     </script>
   </body>
 </html>
