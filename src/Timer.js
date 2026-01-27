@@ -55,9 +55,24 @@ class Timer {
   // 保存记录到localStorage
   saveRecords() {
     try {
-      localStorage.setItem("timerRecords", JSON.stringify(this.records));
+      const data = JSON.stringify(this.records);
+      localStorage.setItem("timerRecords", data);
     } catch (error) {
       console.error("保存记录失败:", error);
+      
+      // 检测是否是配额超限错误
+      if (error.name === 'QuotaExceededError' || error.code === 22) {
+        alert(this.getLocalizedText(
+          "存储空间已满！请清空部分记录后再试。",
+          "Storage quota exceeded! Please clear some records."
+        ));
+      } else {
+        // 其他错误（如隐私模式）
+        alert(this.getLocalizedText(
+          "无法保存记录。请检查浏览器设置是否允许存储数据。",
+          "Cannot save records. Please check browser storage settings."
+        ));
+      }
     }
   }
 
@@ -65,21 +80,26 @@ class Timer {
   saveState() {
     if (!this.startTime && !this.isAgendaMode) return;
 
-    const state = {
-      startTime: this.startTime,
-      initialTime: this.initialTime,
-      isRunning: this.isRunning,
-      isOvertime: this.isOvertime,
-      overtimeStart: this.overtimeStart,
-      pauseTime: this.pauseTime,
-      currentSpeakerIndex: this.currentSpeakerIndex,
-      isAgendaMode: this.isAgendaMode,
-      speakerName: this.speakerNameInput.value,
-      minutes: this.minutesInput.value,
-      seconds: this.secondsInput.value,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem("timerState", JSON.stringify(state));
+    try {
+      const state = {
+        startTime: this.startTime,
+        initialTime: this.initialTime,
+        isRunning: this.isRunning,
+        isOvertime: this.isOvertime,
+        overtimeStart: this.overtimeStart,
+        pauseTime: this.pauseTime,
+        currentSpeakerIndex: this.currentSpeakerIndex,
+        isAgendaMode: this.isAgendaMode,
+        speakerName: this.speakerNameInput.value,
+        minutes: this.minutesInput.value,
+        seconds: this.secondsInput.value,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem("timerState", JSON.stringify(state));
+    } catch (error) {
+      console.error("保存状态失败:", error);
+      // 状态保存失败不影响计时器运行，静默处理
+    }
   }
 
   // 恢复计时状态
@@ -233,12 +253,21 @@ class Timer {
     }
   }
 
+  // 获取本地化文本的辅助方法
+  getLocalizedText(zhText, enText) {
+    const currentLang = localStorage.getItem("language") || "zh";
+    return currentLang === "zh" ? zhText : enText;
+  }
+
   showConfirmDialog() {
-    // 设置默认的停止计时确认文本
+    // 设置默认的停止计时确认文本（支持国际化）
     if (!this.currentAction) {
-      this.confirmDialog.querySelector('p').textContent = "确定结束计时吗？";
-      this.confirmYesBtn.textContent = "确定";
-      this.confirmNoBtn.textContent = "取消";
+      this.confirmDialog.querySelector('p').textContent = 
+        this.getLocalizedText("确定结束计时吗？", "Stop timing?");
+      this.confirmYesBtn.textContent = 
+        this.getLocalizedText("确定", "Confirm");
+      this.confirmNoBtn.textContent = 
+        this.getLocalizedText("取消", "Cancel");
     }
 
     this.confirmDialog.style.display = "block";
@@ -515,9 +544,13 @@ class Timer {
 
   // 显示删除单条记录的确认对话框
   showDeleteConfirmDialog(index) {
-    this.confirmDialog.querySelector('p').textContent = "确定要删除这条记录吗？";
-    this.confirmYesBtn.textContent = "确定";
-    this.confirmNoBtn.textContent = "取消";
+    // 更新对话框文本（支持国际化）
+    this.confirmDialog.querySelector('p').textContent = 
+      this.getLocalizedText("确定要删除这条记录吗？", "Delete this record?");
+    this.confirmYesBtn.textContent = 
+      this.getLocalizedText("确定", "Confirm");
+    this.confirmNoBtn.textContent = 
+      this.getLocalizedText("取消", "Cancel");
 
     // 临时存储记录索引和操作类型
     this.currentAction = 'deleteRecord';
@@ -538,13 +571,21 @@ class Timer {
 
   // 显示清空确认对话框
   showClearConfirmDialog() {
-    this.confirmDialog.querySelector('p').textContent = "确定要清空所有记录吗？此操作不可恢复！";
-    this.confirmYesBtn.textContent = "确定";
-    this.confirmNoBtn.textContent = "取消";
+    // 更新对话框文本（支持国际化）
+    this.confirmDialog.querySelector('p').textContent = 
+      this.getLocalizedText(
+        "确定要清空所有记录吗？此操作不可恢复！", 
+        "Clear all records? This action cannot be undone!"
+      );
+    this.confirmYesBtn.textContent = 
+      this.getLocalizedText("确定", "Confirm");
+    this.confirmNoBtn.textContent = 
+      this.getLocalizedText("取消", "Cancel");
 
-    // 临时存储一个标志，用于区分是停止计时还是清空记录的确认
+    // 设置当前操作标志
     this.currentAction = 'clearRecords';
 
+    // 显示对话框
     this.showConfirmDialog();
   }
 
