@@ -1028,6 +1028,12 @@
           this.exportCsvBtn = document.getElementById("exportCsvBtn");
           this.exportCancelBtn = document.getElementById("exportCancelBtn");
 
+          // 清空确认对话框元素
+          this.clearConfirmDialog = document.getElementById("clearConfirmDialog");
+          this.clearConfirmOverlay = document.getElementById("clearConfirmOverlay");
+          this.clearConfirmYesBtn = document.getElementById("clearConfirmYes");
+          this.clearConfirmNoBtn = document.getElementById("clearConfirmNo");
+
           this.initializeEventListeners();
           this.loadFromStorage();
 
@@ -1054,7 +1060,7 @@
           this.clearBtn.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
-            this.clearAgenda();
+            this.showClearConfirmDialog();
           });
           this.applyBtn.addEventListener("click", () => this.applyAndClose());
           this.fileInput.addEventListener("change", (e) =>
@@ -1082,6 +1088,8 @@
             if (e.key === "Escape") {
               if (this.exportDialog.style.display === "block") {
                 this.hideExportDialog();
+              } else if (this.clearConfirmDialog && this.clearConfirmDialog.style.display === "block") {
+                this.hideClearConfirmDialog();
               } else if (this.isOpen) {
                 this.closePanel();
               }
@@ -1305,15 +1313,59 @@
 
         clearAgenda() {
           if (this.speakers.length === 0) return;
-          
-          // 使用 requestAnimationFrame 确保确认对话框在下一帧显示
-          requestAnimationFrame(() => {
-            const confirmed = confirm("确定要清空所有议程吗？此操作不可恢复。");
-            if (confirmed) {
-              this.speakers = [];
-              this.renderSpeakerList();
-            }
-          });
+          this.speakers = [];
+          this.renderSpeakerList();
+        }
+
+        showClearConfirmDialog() {
+          if (!this.clearConfirmDialog) {
+            // 创建确认对话框
+            const dialog = document.createElement('div');
+            dialog.className = 'confirm-dialog';
+            dialog.id = 'clearConfirmDialog';
+            dialog.innerHTML = `
+              <p>确定要清空所有议程吗？</p>
+              <div class="confirm-dialog-buttons">
+                <button id="clearConfirmYes">确定</button>
+                <button id="clearConfirmNo">取消</button>
+              </div>
+            `;
+            document.body.appendChild(dialog);
+
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-dialog-overlay';
+            overlay.id = 'clearConfirmOverlay';
+            document.body.appendChild(overlay);
+
+            this.clearConfirmDialog = dialog;
+            this.clearConfirmOverlay = overlay;
+            this.clearConfirmYesBtn = document.getElementById('clearConfirmYes');
+            this.clearConfirmNoBtn = document.getElementById('clearConfirmNo');
+
+            // 绑定确认按钮事件
+            this.clearConfirmYesBtn.addEventListener('click', () => {
+              this.clearAgenda();
+              this.hideClearConfirmDialog();
+            });
+
+            this.clearConfirmNoBtn.addEventListener('click', () => {
+              this.hideClearConfirmDialog();
+            });
+
+            overlay.addEventListener('click', () => {
+              this.hideClearConfirmDialog();
+            });
+          }
+
+          this.clearConfirmDialog.style.display = 'block';
+          this.clearConfirmOverlay.style.display = 'block';
+        }
+
+        hideClearConfirmDialog() {
+          if (this.clearConfirmDialog) {
+            this.clearConfirmDialog.style.display = 'none';
+            this.clearConfirmOverlay.style.display = 'none';
+          }
         }
 
         exportAsJson() {
@@ -1735,6 +1787,17 @@
           nameInputs.forEach((input) => {
             input.placeholder = t.namePlaceholder;
           });
+
+          // 更新清空确认对话框的文本
+          const clearDialog = document.getElementById("clearConfirmDialog");
+          if (clearDialog) {
+            const p = clearDialog.querySelector("p");
+            const yesBtn = document.getElementById("clearConfirmYes");
+            const noBtn = document.getElementById("clearConfirmNo");
+            if (p) p.textContent = lang === "zh" ? "确定要清空所有议程吗？" : "Clear all agenda items?";
+            if (yesBtn) yesBtn.textContent = t.confirmYes;
+            if (noBtn) noBtn.textContent = t.confirmNo;
+          }
         }
 
         // 切换语言
