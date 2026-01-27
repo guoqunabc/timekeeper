@@ -234,6 +234,7 @@
       #stopBtn {
         margin-left: 15px;
         background-color: #cc0000;
+        color: #fff;
       }
 
       .records-section {
@@ -494,7 +495,8 @@
         }
 
         .config-toggle-btn,
-        .lang-toggle-btn {
+        .lang-toggle-btn,
+        .theme-toggle-btn {
           width: 48px;
           height: 48px;
           font-size: 22px;
@@ -971,6 +973,17 @@
         background: #1e4bd8;
       }
 
+      /* 危险操作按钮样式（清空等） */
+      .config-btn-danger {
+        background: #e74c3c;
+        color: #fff;
+        border-color: #e74c3c;
+      }
+
+      .config-btn-danger:hover {
+        background: #c0392b;
+      }
+
       .empty-speakers-hint {
         text-align: center;
         padding: 40px 20px;
@@ -1034,6 +1047,260 @@
       .lang-toggle-btn.active {
         background: rgba(76, 175, 80, 0.9);
         color: #fff;
+      }
+
+      /* ========== 主题切换按钮样式 ========== */
+      .theme-toggle-btn {
+        position: fixed;
+        top: 128px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+        background: rgba(50, 50, 50, 0.9);
+        border: 1px solid #555;
+        border-radius: 50%;
+        color: #aaa;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+      }
+
+      .theme-toggle-btn:hover {
+        background: rgba(70, 70, 70, 0.9);
+        transform: scale(1.1);
+      }
+
+      .theme-toggle-btn.active {
+        background: rgba(255, 193, 7, 0.2);
+        border-color: rgba(255, 193, 7, 0.5);
+      }
+
+      /* ========== 亮色主题 ========== */
+      body.light-theme {
+        background-color: #f0f4ff;
+        color: #2c3e50;
+      }
+
+      body.light-theme .timer-container {
+        background: linear-gradient(135deg, #6495ED 0%, #4169E1 100%);
+      }
+
+      body.light-theme #timer {
+        color: #fff;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      body.light-theme input,
+      body.light-theme #speakerName {
+        background-color: rgba(255, 255, 255, 0.95);
+        color: #2c3e50;
+        border-color: rgba(100, 149, 237, 0.3);
+      }
+
+      body.light-theme input::placeholder,
+      body.light-theme #speakerName::placeholder {
+        color: #95a5a6;
+      }
+
+      body.light-theme input:focus,
+      body.light-theme #speakerName:focus {
+        border-color: #6495ED;
+        box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.15);
+      }
+
+      body.light-theme button {
+        background-color: #6495ED;
+        color: #fff;
+        border-color: #6495ED;
+      }
+
+      body.light-theme button:hover {
+        background-color: #4169E1;
+      }
+
+      body.light-theme #stopBtn {
+        background-color: #e74c3c;
+      }
+
+      body.light-theme #stopBtn:hover {
+        background-color: #c0392b;
+      }
+
+      /* 底部清空按钮 - 红色 */
+      body.light-theme .clear-btn {
+        background-color: #e74c3c;
+        border-color: #e74c3c;
+      }
+
+      body.light-theme .clear-btn:hover {
+        background-color: #c0392b;
+      }
+
+      /* 导出按钮保持蓝色 */
+      body.light-theme .export-btn {
+        background-color: #6495ED;
+        border-color: #6495ED;
+      }
+
+      body.light-theme .export-btn:hover {
+        background-color: #4169E1;
+      }
+
+      body.light-theme .records-section {
+        background-color: rgba(255, 255, 255, 0.97);
+        border-top: 1px solid rgba(100, 149, 237, 0.2);
+      }
+
+      body.light-theme .records-title {
+        background-color: rgba(255, 255, 255, 0.99);
+        border-bottom-color: rgba(100, 149, 237, 0.2);
+      }
+
+      body.light-theme h2 {
+        color: #34495e;
+      }
+
+      body.light-theme .records {
+        color: #2c3e50;
+      }
+
+      body.light-theme .record-item {
+        background: rgba(100, 149, 237, 0.08);
+        border-color: rgba(100, 149, 237, 0.25);
+      }
+
+      body.light-theme .record-item:hover {
+        background: rgba(100, 149, 237, 0.15);
+      }
+
+      body.light-theme .delete-record-btn {
+        background-color: #e74c3c;
+        color: #fff;
+      }
+
+      body.light-theme .config-toggle-btn,
+      body.light-theme .lang-toggle-btn,
+      body.light-theme .theme-toggle-btn {
+        background: rgba(255, 255, 255, 0.95);
+        color: #6495ED;
+        border-color: rgba(100, 149, 237, 0.3);
+      }
+
+      body.light-theme .config-toggle-btn:hover,
+      body.light-theme .lang-toggle-btn:hover,
+      body.light-theme .theme-toggle-btn:hover {
+        background: rgba(255, 255, 255, 1);
+        color: #4169E1;
+        box-shadow: 0 4px 12px rgba(100, 149, 237, 0.2);
+      }
+
+      /* 配置面板优化 */
+      body.light-theme .config-panel {
+        background-color: rgba(255, 255, 255, 0.98);
+        color: #2c3e50;
+        border-color: rgba(100, 149, 237, 0.3);
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.15);
+      }
+
+      body.light-theme .config-panel-header {
+        border-bottom-color: rgba(100, 149, 237, 0.2);
+      }
+
+      body.light-theme .config-panel h3 {
+        color: #2c3e50;
+      }
+
+      /* 议程列表项优化 - 改善对比度 */
+      body.light-theme .speaker-item {
+        background: rgba(100, 149, 237, 0.05);
+        border: 1px solid rgba(100, 149, 237, 0.2);
+        border-radius: 8px;
+      }
+
+      body.light-theme .speaker-item:hover {
+        background: rgba(100, 149, 237, 0.1);
+      }
+
+      body.light-theme .speaker-index {
+        background: #6495ED;
+        color: #fff;
+      }
+
+      body.light-theme .speaker-name-input,
+      body.light-theme .speaker-time-input {
+        background-color: #fff;
+        color: #2c3e50;
+        border: 1px solid rgba(100, 149, 237, 0.3);
+      }
+
+      body.light-theme .speaker-name-input:focus,
+      body.light-theme .speaker-time-input:focus {
+        border-color: #6495ED;
+        box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.1);
+      }
+
+      /* 配置面板按钮优化 */
+      body.light-theme .speaker-controls button {
+        background-color: #6495ED;
+        color: #fff;
+      }
+
+      body.light-theme .speaker-controls .delete-speaker-btn {
+        background-color: #e74c3c;
+      }
+
+      body.light-theme .speaker-controls .delete-speaker-btn:hover {
+        background-color: #c0392b;
+      }
+
+      body.light-theme #addSpeakerBtn {
+        background-color: #27ae60;
+        border-color: #27ae60;
+      }
+
+      body.light-theme #addSpeakerBtn:hover {
+        background-color: #229954;
+      }
+
+      body.light-theme #clearAgendaBtn {
+        background-color: #e74c3c;
+        border-color: #e74c3c;
+        color: #fff !important;
+      }
+
+      body.light-theme #clearAgendaBtn:hover {
+        background-color: #c0392b;
+      }
+
+      body.light-theme .confirm-dialog {
+        background-color: rgba(255, 255, 255, 0.98);
+        border-color: rgba(100, 149, 237, 0.3);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      body.light-theme .confirm-dialog p {
+        color: #2c3e50;
+      }
+
+      body.light-theme .confirm-dialog-overlay {
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      body.light-theme .export-dialog {
+        background-color: rgba(255, 255, 255, 0.98);
+        border-color: rgba(100, 149, 237, 0.3);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      body.light-theme .export-dialog h3 {
+        color: #2c3e50;
+        border-bottom-color: rgba(100, 149, 237, 0.2);
       }
     </style>
   </head>
@@ -1104,6 +1371,10 @@
     <button class="lang-toggle-btn" id="langToggleBtn" title="切换语言">
       中
     </button>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle-btn" id="themeToggleBtn" title="切换主题">
+      ☀️
+    </button>
     <div class="config-panel-overlay" id="configPanelOverlay"></div>
     <div class="config-panel" id="configPanel">
       <div class="config-panel-header">
@@ -1123,11 +1394,7 @@
           <button class="config-btn config-btn-secondary" id="exportAgendaBtn">
             导出
           </button>
-          <button
-            class="config-btn config-btn-secondary"
-            id="clearAgendaBtn"
-            style="color: #ff4444; border-color: rgba(255, 68, 68, 0.5)"
-          >
+          <button class="config-btn config-btn-danger" id="clearAgendaBtn">
             清空
           </button>
         </div>
@@ -1980,6 +2247,45 @@
 
         // 绑定点击事件
         langBtn.addEventListener("click", toggleLanguage);
+      }
+
+      // ========== 主题切换功能 ==========
+      {
+        const themeBtn = document.getElementById("themeToggleBtn");
+        let currentTheme = localStorage.getItem("theme") || "dark";
+
+        // 应用主题
+        function applyTheme(theme) {
+          const lang = localStorage.getItem("language") || "zh";
+          if (theme === "light") {
+            document.body.classList.add("light-theme");
+            themeBtn.textContent = "🌙";
+            themeBtn.title = lang === "zh" ? "切换到黑夜模式" : "Switch to dark mode";
+          } else {
+            document.body.classList.remove("light-theme");
+            themeBtn.textContent = "☀️";
+            themeBtn.title = lang === "zh" ? "切换到白天模式" : "Switch to light mode";
+          }
+        }
+
+        // 切换主题
+        function toggleTheme() {
+          currentTheme = currentTheme === "dark" ? "light" : "dark";
+          localStorage.setItem("theme", currentTheme);
+          applyTheme(currentTheme);
+
+          // 添加激活动画
+          themeBtn.classList.add("active");
+          setTimeout(() => {
+            themeBtn.classList.remove("active");
+          }, 300);
+        }
+
+        // 初始化主题
+        applyTheme(currentTheme);
+
+        // 绑定点击事件
+        themeBtn.addEventListener("click", toggleTheme);
       }
     </script>
   </body>
