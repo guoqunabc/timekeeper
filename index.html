@@ -2,7 +2,10 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta 
+      name="viewport" 
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" 
+    />
     <title>会议计时器</title>
     <style>
       /* ========== 字体加载 ========== */
@@ -32,6 +35,11 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        /* 移动端触摸优化 */
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
       }
 
       .timer-container {
@@ -157,6 +165,9 @@
         transition:
           border-color 0.3s,
           box-shadow 0.3s;
+        /* 允许输入框内文本选择 */
+        -webkit-user-select: text;
+        user-select: text;
       }
 
       input:focus {
@@ -464,6 +475,157 @@
           grid-template-columns: 1fr;
         }
       }
+
+      /* ========== 移动端优化 ========== */
+      @media (max-width: 768px) {
+        /* 配置面板全屏显示 */
+        .config-panel {
+          width: 95%;
+          max-width: 95%;
+          left: 50%;
+          transform: translateX(-50%);
+          max-height: 90vh;
+        }
+
+        /* 增大按钮触摸区域 */
+        button {
+          min-height: 48px;
+          padding: 12px 20px;
+        }
+
+        .config-toggle-btn,
+        .lang-toggle-btn {
+          width: 48px;
+          height: 48px;
+          font-size: 22px;
+        }
+
+        /* 时间输入区域优化 */
+        .time-input {
+          font-size: 1.8em;
+          margin-top: 80px;
+        }
+
+        .time-input input {
+          font-size: 1.2em;
+          min-width: 60px;
+          padding: 10px;
+        }
+
+        #speakerName {
+          font-size: 1.1em;
+          padding: 12px;
+          min-height: 48px;
+        }
+
+        /* 记录区域优化 */
+        .records-section {
+          height: 30vh;
+        }
+
+        .records {
+          padding: 10px 20px 0;
+        }
+
+        .record-item {
+          padding: 12px;
+          font-size: 0.95em;
+        }
+
+        .delete-record-btn {
+          width: 32px;
+          height: 32px;
+          font-size: 20px;
+        }
+
+        /* 导出弹窗优化 */
+        .export-dialog {
+          width: 90%;
+          max-width: 90%;
+        }
+
+        /* 配置面板内容优化 */
+        .config-panel-content {
+          padding: 15px;
+        }
+
+        .speaker-item input {
+          font-size: 1em;
+          padding: 10px;
+        }
+
+        .speaker-controls button {
+          min-width: 36px;
+          height: 36px;
+        }
+      }
+
+      /* 小屏手机优化 */
+      @media (max-width: 480px) {
+        /* 计时器字体大小微调 */
+        #timer {
+          font-size: 28vw;
+        }
+
+        /* 进一步增大按钮 */
+        #startBtn,
+        #stopBtn {
+          font-size: 1.1em;
+          padding: 14px 24px;
+        }
+
+        /* 配置面板按钮区域 */
+        .config-panel-actions {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .config-panel-actions button {
+          width: 100%;
+        }
+
+        /* 记录控制按钮 */
+        .record-controls {
+          flex-wrap: wrap;
+        }
+
+        .record-controls button {
+          flex: 1;
+          min-width: 100px;
+        }
+
+        /* 时间输入组优化 */
+        .time-input-group {
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .time-input-group input {
+          min-width: 50px;
+        }
+      }
+
+      /* 横屏适配 */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .main-content {
+          margin-top: 0;
+        }
+
+        #timer {
+          font-size: 20vh;
+          height: 35vh;
+        }
+
+        .time-input {
+          margin-top: 40px;
+          font-size: 1.5em;
+        }
+
+        .records-section {
+          height: 25vh;
+        }
+      }
+
 
       @keyframes overtime-blink {
         0%,
