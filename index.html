@@ -51,7 +51,7 @@
         width: 100%;
         margin-top: -20vh;
         position: relative;
-        z-index: 10;
+        z-index: 50;
       }
 
       #timer {
@@ -67,7 +67,7 @@
         letter-spacing: -0.05em;
         height: 50vh;
         position: relative;
-        z-index: 10;
+        z-index: 50;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
@@ -134,7 +134,7 @@
         justify-content: center;
         margin-top: 120px;
         font-size: 2em;
-        z-index: 20;
+        z-index: 100;
       }
 
       .time-input-group {
@@ -230,10 +230,13 @@
         height: 25vh;
         position: fixed;
         bottom: 0;
+        left: 0;
+        right: 0;
         background-color: rgba(0, 0, 0, 0.95);
         display: flex;
         flex-direction: column;
-        z-index: 5;
+        z-index: 150;
+        pointer-events: auto;
       }
 
       .records-title {
@@ -241,20 +244,22 @@
         position: sticky;
         top: 0;
         background-color: rgba(0, 0, 0, 0.98);
-        z-index: 6;
+        z-index: 151;
         text-align: center;
         border-bottom: 1px solid #444;
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 15px;
+        pointer-events: auto;
       }
 
       .record-controls {
         display: flex;
         gap: 10px;
-        z-index: 7;
+        z-index: 152;
         position: relative;
+        pointer-events: auto;
       }
 
       .record-controls button {
@@ -263,7 +268,7 @@
         margin: 0;
         cursor: pointer;
         pointer-events: auto;
-        z-index: 8;
+        z-index: 153;
         position: relative;
       }
 
@@ -297,6 +302,8 @@
         overflow-y: auto;
         flex-grow: 1;
         position: relative;
+        z-index: 150;
+        pointer-events: auto;
       }
 
       #recordList {
