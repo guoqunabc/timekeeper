@@ -40,6 +40,8 @@
         user-select: none;
         -webkit-tap-highlight-color: transparent;
         -webkit-touch-callout: none;
+        /* 主题切换动画 */
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
 
       .timer-container {
@@ -48,6 +50,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        transition: background 0.3s ease;
       }
 
       .main-content {
@@ -72,7 +75,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        letter-spacing: -0.05em;
+        letter-spacing: 0.02em;
         height: 50vh;
         position: relative;
         z-index: 50;
@@ -116,8 +119,9 @@
         border: none;
         border-radius: 5px;
         transition:
-          background-color 0.3s,
-          transform 0.1s;
+          background-color 0.3s ease,
+          color 0.3s ease,
+          transform 0.1s ease;
       }
 
       button:hover {
@@ -125,7 +129,7 @@
       }
 
       button:active {
-        transform: translateY(1px);
+        transform: scale(0.98);
       }
 
       button:disabled {
@@ -163,8 +167,10 @@
         height: 58px;
         box-sizing: border-box;
         transition:
-          border-color 0.3s,
-          box-shadow 0.3s;
+          background-color 0.3s ease,
+          color 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
         /* 允许输入框内文本选择 */
         -webkit-user-select: text;
         user-select: text;
@@ -339,6 +345,13 @@
         justify-content: space-between;
         align-items: center;
         position: relative;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .record-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
 
       .record-content {
@@ -838,10 +851,16 @@
 
       .speaker-drag-handle {
         cursor: grab;
-        color: #666;
+        color: #999;
         font-size: 16px;
         padding: 4px;
         user-select: none;
+        opacity: 0.4;
+        transition: opacity 0.2s ease;
+      }
+
+      .speaker-item:hover .speaker-drag-handle {
+        opacity: 0.8;
       }
 
       .speaker-drag-handle:active {
@@ -1093,7 +1112,9 @@
 
       body.light-theme #timer {
         color: #fff;
-        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        text-shadow: 
+          0 2px 4px rgba(0, 0, 0, 0.1),
+          0 4px 20px rgba(100, 149, 237, 0.3);
       }
 
       body.light-theme input,
