@@ -260,8 +260,9 @@ class Timer {
       this.intervalId = setInterval(() => this.updateTimer(), 1000);
     }
 
-    // 清理临时变量，避免影响其他操作
-    delete this.currentAction;
+    // 注意：不要在这里删除 currentAction！
+    // 因为确认按钮的事件处理程序需要在 hideConfirmDialog() 之后检查它
+    // currentAction 会在事件处理程序中被清理
     delete this.recordIndexToDelete;
   }
 
