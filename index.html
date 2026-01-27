@@ -1,0 +1,1544 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>会议计时器</title>
+    <style>
+      /* ========== 字体加载 ========== */
+      @font-face {
+        font-family: "Arial Local";
+        src: url("fonts/Arial.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "DIN Pro";
+        src: url("fonts/DINPro-Regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: black;
+        color: white;
+        font-family: "Arial Local", Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .timer-container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: -20vh;
+        position: relative;
+        z-index: 1;
+      }
+
+      #timer {
+        font-family: "DIN Pro", monospace;
+        font-size: 30vw;
+        font-weight: bold;
+        line-height: 1.3;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        letter-spacing: -0.05em;
+        height: 50vh;
+        position: relative;
+        z-index: 1;
+      }
+
+      .timer-minutes,
+      .timer-seconds {
+        width: 1.1em;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+
+      .timer-separator {
+        width: 0.4em;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        transform: translateY(-0.08em);
+        position: relative;
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      button {
+        font-size: 1.8em;
+        margin: 0 15px;
+        padding: 15px 30px;
+        cursor: pointer;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        transition:
+          background-color 0.3s,
+          transform 0.1s;
+      }
+
+      button:hover {
+        background-color: #444;
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      button:disabled {
+        background-color: #222;
+        color: #666;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .time-input {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 120px;
+        font-size: 2em;
+        z-index: 10;
+      }
+
+      .time-input-group {
+        display: flex;
+        align-items: center;
+      }
+
+      input {
+        font-size: 1.1em;
+        width: 80px;
+        padding: 8px;
+        margin: 0;
+        background-color: #333;
+        color: white;
+        border: 1px solid #555;
+        border-radius: 5px;
+        text-align: center;
+        height: 58px;
+        box-sizing: border-box;
+        transition:
+          border-color 0.3s,
+          box-shadow 0.3s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #2962ff;
+        box-shadow: 0 0 0 2px rgba(41, 98, 255, 0.3);
+      }
+
+      input:invalid {
+        border-color: #cc0000;
+      }
+
+      #minutes,
+      #seconds {
+        margin: 0 2px;
+      }
+
+      #speakerName {
+        font-size: 22px !important;
+        width: 180px;
+        padding: 8px;
+        margin: 0;
+        background-color: #333;
+        color: white;
+        border: 1px solid #555;
+        border-radius: 5px;
+        text-align: center;
+        height: 58px;
+        box-sizing: border-box;
+        margin-right: 15px;
+      }
+
+      #speakerName::placeholder {
+        color: #888;
+      }
+
+      #speakerName:focus {
+        outline: none;
+        border-color: #666;
+      }
+
+      .time-input-group span {
+        margin: 0 2px;
+        font-weight: bold;
+        transform: translateY(-0.08em);
+        display: inline-block;
+      }
+
+      #startBtn,
+      #stopBtn {
+        font-size: 1em;
+        padding: 8px 20px;
+        height: 58px;
+        box-sizing: border-box;
+        line-height: 1;
+        font-weight: bold;
+      }
+
+      #startBtn {
+        margin: 0;
+      }
+
+      #stopBtn {
+        margin-left: 15px;
+        background-color: #cc0000;
+      }
+
+      .records-section {
+        width: 100%;
+        height: 25vh;
+        position: fixed;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+      }
+
+      .records-title {
+        padding: 3px 0 15px 0;
+        position: sticky;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 101;
+        text-align: center;
+        border-bottom: 1px solid #444;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .record-controls {
+        display: flex;
+        gap: 10px;
+        z-index: 102;
+        position: relative;
+      }
+
+      .record-controls button {
+        font-size: 0.8em;
+        padding: 5px 10px;
+        margin: 0;
+        cursor: pointer;
+        pointer-events: auto;
+        z-index: 103;
+        position: relative;
+      }
+
+      .export-btn {
+        background-color: #2962ff;
+      }
+
+      .export-btn:hover {
+        background-color: #1e4bd8;
+      }
+
+      .clear-btn {
+        background-color: #cc0000;
+      }
+
+      .clear-btn:hover {
+        background-color: #aa0000;
+      }
+
+      h2 {
+        color: #aaa;
+        font-size: 1.3em;
+        margin: 0;
+        font-weight: normal;
+        letter-spacing: 0.05em;
+      }
+
+      .records {
+        color: #888;
+        padding: 10px 40px 0;
+        overflow-y: auto;
+        flex-grow: 1;
+        position: relative;
+      }
+
+      #recordList {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px 20px;
+        padding: 10px 0;
+        margin: 0 20px;
+      }
+
+      .record-item {
+        font-size: 1.1em;
+        margin: 0;
+        padding: 3px 5px;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+      }
+
+      .record-content {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .delete-record-btn {
+        font-size: 1.2em;
+        padding: 2px 6px;
+        margin: 0;
+        margin-left: 8px;
+        background-color: #cc0000;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.3s;
+        flex-shrink: 0;
+      }
+
+      .delete-record-btn:hover {
+        opacity: 1;
+        background-color: #aa0000;
+      }
+
+      .record-item:hover .delete-record-btn {
+        opacity: 1;
+      }
+
+      .scroll-indicator {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(136, 136, 136, 0.5);
+        font-size: 20px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .scroll-indicator::before,
+      .scroll-indicator::after {
+        content: ">";
+        display: inline-block;
+        transform: rotate(90deg);
+        margin: 0 -3px;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(8px);
+        }
+      }
+
+      .button-group {
+        margin-left: 60px;
+        display: flex;
+        align-items: center;
+      }
+
+      .confirm-dialog {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 35px;
+        border-radius: 10px;
+        border: 1px solid #444;
+        text-align: center;
+        z-index: 1000;
+      }
+
+      .confirm-dialog p {
+        font-size: 1.5em;
+        margin: 0 0 30px 0;
+        color: #fff;
+      }
+
+      .confirm-dialog-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .confirm-dialog button {
+        font-size: 1.2em;
+        padding: 10px 25px;
+        min-width: 100px;
+      }
+
+      #confirmYes {
+        background-color: #2962ff;
+      }
+
+      #confirmYes:hover {
+        background-color: #1e4bd8;
+      }
+
+      #confirmNo {
+        background-color: #333;
+      }
+
+      #confirmNo:hover {
+        background-color: #444;
+      }
+
+      .confirm-dialog-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 999;
+      }
+
+      @media (max-width: 1200px) {
+        #recordList {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 800px) {
+        #recordList {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @keyframes overtime-blink {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+          text-shadow:
+            0 0 20px rgba(255, 0, 0, 0.5),
+            0 0 40px rgba(255, 0, 0, 0.3);
+        }
+        50% {
+          opacity: 0.7;
+          transform: scale(var(--scale-factor, 0.92));
+          text-shadow:
+            0 0 30px rgba(255, 0, 0, 0.7),
+            0 0 60px rgba(255, 0, 0, 0.5);
+        }
+      }
+
+      #timer.overtime-animation {
+        animation-name: overtime-blink;
+        animation-duration: var(--blink-duration, 1s);
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+        transform-origin: center center;
+      }
+
+      input::placeholder {
+        color: #555;
+        opacity: 1;
+      }
+
+      @keyframes warning-blink {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+          text-shadow:
+            0 0 20px rgba(255, 200, 0, 0.5),
+            0 0 40px rgba(255, 200, 0, 0.3);
+        }
+        50% {
+          opacity: 0.75;
+          transform: scale(0.95);
+          text-shadow:
+            0 0 30px rgba(255, 200, 0, 0.6),
+            0 0 60px rgba(255, 200, 0, 0.4);
+        }
+      }
+
+      #timer.warning-animation {
+        color: #ffd700;
+        animation-name: warning-blink;
+        animation-duration: 1.2s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+        transform-origin: center center;
+      }
+
+      /* ========== 议程配置面板样式 ========== */
+      .config-toggle-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+        background: rgba(50, 50, 50, 0.8);
+        border: 1px solid #555;
+        border-radius: 50%;
+        color: #aaa;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .config-toggle-btn:hover {
+        background: rgba(70, 70, 70, 0.9);
+        color: #fff;
+        transform: rotate(45deg);
+      }
+
+      .config-toggle-btn.active {
+        background: rgba(41, 98, 255, 0.9);
+        color: #fff;
+        transform: rotate(45deg);
+      }
+
+      .config-panel-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 300;
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .config-panel-overlay.show {
+        display: block;
+        opacity: 1;
+      }
+
+      .config-panel {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        width: 480px;
+        max-width: 90vw;
+        max-height: 80vh;
+        background: rgba(30, 30, 30, 0.98);
+        border: 1px solid #444;
+        border-radius: 16px;
+        z-index: 301;
+        display: none;
+        flex-direction: column;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .config-panel.show {
+        display: flex;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .config-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #444;
+      }
+
+      .config-panel-header h3 {
+        margin: 0;
+        font-size: 1.2em;
+        font-weight: 500;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .config-panel-close {
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 4px 8px;
+        margin: 0;
+        line-height: 1;
+        transition: color 0.2s;
+      }
+
+      .config-panel-close:hover {
+        color: #fff;
+        background: none;
+      }
+
+      .config-panel-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 20px;
+      }
+
+      .speaker-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .speaker-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        background: rgba(50, 50, 50, 0.6);
+        border: 1px solid #444;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+
+      .speaker-item:hover {
+        border-color: #666;
+        background: rgba(60, 60, 60, 0.8);
+      }
+
+      .speaker-item.dragging {
+        opacity: 0.5;
+        border-color: #2962ff;
+      }
+
+      .speaker-drag-handle {
+        cursor: grab;
+        color: #666;
+        font-size: 16px;
+        padding: 4px;
+        user-select: none;
+      }
+
+      .speaker-drag-handle:active {
+        cursor: grabbing;
+      }
+
+      .speaker-index {
+        min-width: 24px;
+        height: 24px;
+        background: #444;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #aaa;
+        flex-shrink: 0;
+      }
+
+      .speaker-name-input {
+        flex: 1;
+        min-width: 120px;
+        font-size: 14px !important;
+        padding: 8px 12px !important;
+        height: auto !important;
+      }
+
+      .speaker-time-inputs {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .speaker-time-input {
+        width: 50px !important;
+        font-size: 14px !important;
+        padding: 8px !important;
+        height: auto !important;
+        text-align: center;
+      }
+
+      .speaker-time-sep {
+        color: #888;
+        font-weight: bold;
+      }
+
+      .speaker-time-label {
+        color: #666;
+        font-size: 12px;
+        margin-left: 2px;
+      }
+
+      .speaker-delete-btn {
+        background: none;
+        border: none;
+        color: #666;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px 8px;
+        margin: 0;
+        transition: color 0.2s;
+      }
+
+      .speaker-delete-btn:hover {
+        color: #ff4444;
+        background: none;
+      }
+
+      .add-speaker-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0 0 0;
+        background: rgba(41, 98, 255, 0.15);
+        border: 1px dashed #2962ff;
+        border-radius: 8px;
+        color: #2962ff;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .add-speaker-btn:hover {
+        background: rgba(41, 98, 255, 0.25);
+      }
+
+      .config-panel-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-top: 1px solid #444;
+        gap: 10px;
+      }
+
+      .config-footer-left {
+        display: flex;
+        gap: 8px;
+      }
+
+      .config-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        margin: 0;
+      }
+
+      .config-btn-secondary {
+        background: #444;
+        color: #ddd;
+      }
+
+      .config-btn-secondary:hover {
+        background: #555;
+      }
+
+      .config-btn-primary {
+        background: #2962ff;
+        color: #fff;
+      }
+
+      .config-btn-primary:hover {
+        background: #1e4bd8;
+      }
+
+      .empty-speakers-hint {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+      }
+
+      .empty-speakers-hint p {
+        margin: 0 0 16px 0;
+        font-size: 14px;
+      }
+      /* Drag & Drop Highlight */
+      .config-panel.dragging-file {
+        border: 2px dashed #007bff !important;
+        background-color: rgba(0, 123, 255, 0.1);
+      }
+      .config-panel.dragging-file .config-panel-body {
+        pointer-events: none; /* Let drag events bubble to panel */
+      }
+
+      .drag-hint {
+        text-align: center;
+        color: #888;
+        font-size: 12px;
+        margin: 15px 0 0 0;
+        pointer-events: none;
+        border: 1px dashed #ccc;
+        border-radius: 4px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="timer-container">
+      <div class="time-input">
+        <div class="time-input-group">
+          <input type="text" id="speakerName" placeholder="演讲者" />
+          <input
+            type="number"
+            id="minutes"
+            min="0"
+            value="10"
+            placeholder="分"
+          />
+          <span>:</span>
+          <input
+            type="number"
+            id="seconds"
+            min="0"
+            max="59"
+            value="00"
+            placeholder="秒"
+          />
+          <div class="button-group">
+            <button id="startBtn">开始</button>
+            <button id="stopBtn" disabled>停止</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div id="timer">
+          <span class="timer-minutes">10</span>
+          <span class="timer-separator">:</span>
+          <span class="timer-seconds">00</span>
+        </div>
+      </div>
+
+      <div class="records-section">
+        <div class="records-title">
+          <h2>演讲时间记录</h2>
+          <div class="record-controls">
+            <button class="export-btn" type="button">导出</button>
+            <button class="clear-btn" type="button">清空</button>
+          </div>
+        </div>
+        <div class="records">
+          <div id="recordList"></div>
+          <div class="scroll-indicator"></div>
+        </div>
+      </div>
+    </div>
+    <div class="confirm-dialog-overlay"></div>
+    <div class="confirm-dialog">
+      <p>确定结束计时吗？</p>
+      <div class="confirm-dialog-buttons">
+        <button id="confirmYes">确定</button>
+        <button id="confirmNo">取消</button>
+      </div>
+    </div>
+
+    <!-- 配置面板 -->
+    <button class="config-toggle-btn" id="configToggleBtn" title="议程配置">
+      ⚙
+    </button>
+    <div class="config-panel-overlay" id="configPanelOverlay"></div>
+    <div class="config-panel" id="configPanel">
+      <div class="config-panel-header">
+        <h3>📋 会议议程配置</h3>
+        <button class="config-panel-close" id="configPanelClose">×</button>
+      </div>
+      <div class="config-panel-body">
+        <div class="speaker-list" id="speakerList"></div>
+        <button class="add-speaker-btn" id="addSpeakerBtn">+ 添加演讲者</button>
+        <div class="drag-hint">支持拖拽 .csv / .json 文件至此区域直接导入</div>
+      </div>
+      <div class="config-panel-footer">
+        <div class="config-footer-left">
+          <button class="config-btn config-btn-secondary" id="importAgendaBtn">
+            导入
+          </button>
+          <button class="config-btn config-btn-secondary" id="exportAgendaBtn">
+            导出
+          </button>
+          <button
+            class="config-btn config-btn-secondary"
+            id="clearAgendaBtn"
+            style="color: #ff4444; border-color: rgba(255, 68, 68, 0.5)"
+          >
+            清空
+          </button>
+        </div>
+        <button class="config-btn config-btn-primary" id="applyAgendaBtn">
+          保存并应用
+        </button>
+      </div>
+    </div>
+    <input
+      type="file"
+      id="agendaFileInput"
+      accept=".json,.csv"
+      style="display: none"
+    />
+
+    <!-- 导出格式选择弹窗 -->
+    <div class="confirm-dialog" id="exportDialog">
+      <p>请选择导出格式</p>
+      <div class="confirm-dialog-buttons">
+        <button id="exportJsonBtn" style="background-color: #2962ff">
+          JSON (备份)
+        </button>
+        <button id="exportCsvBtn" style="background-color: #28a745">
+          CSV (Excel)
+        </button>
+        <button id="exportCancelBtn" style="background-color: #333">
+          取消
+        </button>
+      </div>
+    </div>
+    <div class="confirm-dialog-overlay" id="exportOverlay"></div>
+
+    <script src="会议议程配置.js"></script>
+    <script src="src/Timer.js"></script>
+    <script>
+      // ========== AgendaManager 议程配置管理模块 ==========
+      class AgendaManager {
+        constructor() {
+          this.speakers = [];
+          this.isOpen = false;
+          this.draggedItem = null;
+
+          // DOM 元素
+          this.toggleBtn = document.getElementById("configToggleBtn");
+          this.panel = document.getElementById("configPanel");
+          this.overlay = document.getElementById("configPanelOverlay");
+          this.closeBtn = document.getElementById("configPanelClose");
+          this.speakerList = document.getElementById("speakerList");
+          this.addBtn = document.getElementById("addSpeakerBtn");
+          this.importBtn = document.getElementById("importAgendaBtn");
+          this.exportBtn = document.getElementById("exportAgendaBtn");
+          this.clearBtn = document.getElementById("clearAgendaBtn");
+          this.applyBtn = document.getElementById("applyAgendaBtn");
+          this.fileInput = document.getElementById("agendaFileInput");
+
+          // 导出弹窗元素
+          this.exportDialog = document.getElementById("exportDialog");
+          this.exportOverlay = document.getElementById("exportOverlay");
+          this.exportJsonBtn = document.getElementById("exportJsonBtn");
+          this.exportCsvBtn = document.getElementById("exportCsvBtn");
+          this.exportCancelBtn = document.getElementById("exportCancelBtn");
+
+          this.initializeEventListeners();
+          this.loadFromStorage();
+
+          // Expose for external sync
+          window.agendaManager = this;
+        }
+
+        initializeEventListeners() {
+          // 打开/关闭面板
+          this.toggleBtn.addEventListener("click", () => this.togglePanel());
+          this.closeBtn.addEventListener("click", () => this.closePanel());
+          this.overlay.addEventListener("click", () => this.closePanel());
+
+          // 添加演讲者
+          this.addBtn.addEventListener("click", () => this.addSpeaker());
+
+          // 导入/导出/应用
+          this.importBtn.addEventListener("click", () =>
+            this.fileInput.click(),
+          );
+          this.exportBtn.addEventListener("click", () =>
+            this.showExportDialog(),
+          );
+          this.clearBtn.addEventListener("click", () => this.clearAgenda());
+          this.applyBtn.addEventListener("click", () => this.applyAndClose());
+          this.fileInput.addEventListener("change", (e) =>
+            this.importAgenda(e),
+          );
+
+          // 导出弹窗事件
+          this.exportJsonBtn.addEventListener("click", () => {
+            this.exportAsJson();
+            this.hideExportDialog();
+          });
+          this.exportCsvBtn.addEventListener("click", () => {
+            this.exportAsCsv();
+            this.hideExportDialog();
+          });
+          this.exportCancelBtn.addEventListener("click", () =>
+            this.hideExportDialog(),
+          );
+          this.exportOverlay.addEventListener("click", () =>
+            this.hideExportDialog(),
+          );
+
+          // ESC 键关闭
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+              if (this.exportDialog.style.display === "block") {
+                this.hideExportDialog();
+              } else if (this.isOpen) {
+                this.closePanel();
+              }
+            }
+          });
+          // File Drop Support
+          this.panel.addEventListener("dragover", (e) =>
+            this.handleFileDragOver(e),
+          );
+          this.panel.addEventListener("dragleave", (e) =>
+            this.handleFileDragLeave(e),
+          );
+          this.panel.addEventListener("drop", (e) => this.handleFileDrop(e));
+        }
+
+        togglePanel() {
+          if (this.isOpen) {
+            this.closePanel();
+          } else {
+            this.openPanel();
+          }
+        }
+
+        openPanel() {
+          this.isOpen = true;
+          this.toggleBtn.classList.add("active");
+          this.overlay.classList.add("show");
+          this.panel.classList.add("show");
+          this.renderSpeakerList();
+        }
+
+        closePanel() {
+          this.isOpen = false;
+          this.toggleBtn.classList.remove("active");
+          this.overlay.classList.remove("show");
+          this.panel.classList.remove("show");
+        }
+
+        showExportDialog() {
+          this.exportDialog.style.display = "block";
+          this.exportOverlay.style.display = "block";
+        }
+
+        hideExportDialog() {
+          this.exportDialog.style.display = "none";
+          this.exportOverlay.style.display = "none";
+        }
+
+        loadFromStorage() {
+          try {
+            const saved = localStorage.getItem("agendaSpeakers");
+            if (saved) {
+              this.speakers = JSON.parse(saved);
+            } else if (
+              window.TIMEKEEPER_CONFIG &&
+              window.TIMEKEEPER_CONFIG.speakers
+            ) {
+              // 首次加载时从配置文件读取
+              this.speakers = [...window.TIMEKEEPER_CONFIG.speakers];
+            }
+
+            // 确保同步给 Timer
+            if (this.speakers.length > 0 && window.timeKeeper) {
+              window.timeKeeper.agendaSpeakers = this.speakers;
+              window.timeKeeper.isAgendaMode = true;
+              // 仅当 Timer 未恢复状态时，重置为第一个演讲者
+              if (!window.timeKeeper.isStateRestored) {
+                window.timeKeeper.setCurrentSpeaker(0);
+              }
+            }
+          } catch (error) {
+            console.error("加载议程配置失败:", error);
+            this.speakers = [];
+          }
+        }
+
+        saveToStorage() {
+          try {
+            localStorage.setItem(
+              "agendaSpeakers",
+              JSON.stringify(this.speakers),
+            );
+          } catch (error) {
+            console.error("保存议程配置失败:", error);
+          }
+        }
+
+        // Sync from main timer inputs
+        syncFromTimer(updatedSpeakers) {
+          this.speakers = updatedSpeakers;
+          this.saveToStorage();
+          if (this.isOpen) {
+            this.renderSpeakerList();
+          }
+        }
+
+        renderSpeakerList() {
+          if (this.speakers.length === 0) {
+            this.speakerList.innerHTML = `
+                    <div class="empty-speakers-hint">
+                        <p>暂无演讲者</p>
+                        <p>点击下方按钮添加演讲者</p>
+                    </div>
+                `;
+            return;
+          }
+
+          this.speakerList.innerHTML = this.speakers
+            .map(
+              (speaker, index) => `
+                <div class="speaker-item" data-index="${index}" draggable="true">
+                    <span class="speaker-drag-handle">⋮⋮</span>
+                    <span class="speaker-index">${index + 1}</span>
+                    <input type="text" class="speaker-name-input" value="${this.escapeHtml(speaker.name)}" 
+                           placeholder="姓名" data-field="name" data-index="${index}">
+                    <div class="speaker-time-inputs">
+                        <input type="number" class="speaker-time-input" value="${speaker.minutes || 0}" 
+                               min="0" max="999" data-field="minutes" data-index="${index}">
+                        <span class="speaker-time-label">分</span>
+                        <span class="speaker-time-sep">:</span>
+                        <input type="number" class="speaker-time-input" value="${(speaker.seconds || 0).toString().padStart(2, "0")}" 
+                               min="0" max="59" data-field="seconds" data-index="${index}">
+                        <span class="speaker-time-label">秒</span>
+                    </div>
+                    <button class="speaker-delete-btn" data-index="${index}" title="删除">×</button>
+                </div>
+            `,
+            )
+            .join("");
+
+          this.bindSpeakerEvents();
+        }
+
+        bindSpeakerEvents() {
+          // 输入事件
+          this.speakerList.querySelectorAll("input").forEach((input) => {
+            input.addEventListener("input", (e) => {
+              const index = parseInt(e.target.dataset.index);
+              const field = e.target.dataset.field;
+              let value = e.target.value;
+
+              if (field === "minutes" || field === "seconds") {
+                value = Math.max(0, parseInt(value) || 0);
+                if (field === "seconds") value = Math.min(59, value);
+                if (field === "minutes") value = Math.min(999, value);
+              }
+
+              this.speakers[index][field] = value;
+            });
+          });
+
+          // 删除按钮
+          this.speakerList
+            .querySelectorAll(".speaker-delete-btn")
+            .forEach((btn) => {
+              btn.addEventListener("click", (e) => {
+                const index = parseInt(e.target.dataset.index);
+                this.removeSpeaker(index);
+              });
+            });
+
+          // 拖拽排序
+          this.speakerList.querySelectorAll(".speaker-item").forEach((item) => {
+            item.addEventListener("dragstart", (e) => this.handleDragStart(e));
+            item.addEventListener("dragover", (e) => this.handleDragOver(e));
+            item.addEventListener("drop", (e) => this.handleDrop(e));
+            item.addEventListener("dragend", (e) => this.handleDragEnd(e));
+          });
+        }
+
+        handleDragStart(e) {
+          this.draggedItem = e.target.closest(".speaker-item");
+          this.draggedItem.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+        }
+
+        handleDragOver(e) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+        }
+
+        handleDrop(e) {
+          e.preventDefault();
+          const target = e.target.closest(".speaker-item");
+          if (target && this.draggedItem && target !== this.draggedItem) {
+            const fromIndex = parseInt(this.draggedItem.dataset.index);
+            const toIndex = parseInt(target.dataset.index);
+
+            const [removed] = this.speakers.splice(fromIndex, 1);
+            this.speakers.splice(toIndex, 0, removed);
+            this.renderSpeakerList();
+          }
+        }
+
+        handleDragEnd(e) {
+          if (this.draggedItem) {
+            this.draggedItem.classList.remove("dragging");
+            this.draggedItem = null;
+          }
+        }
+
+        addSpeaker() {
+          this.speakers.push({
+            name: "",
+            minutes: 5,
+            seconds: 0,
+          });
+          this.renderSpeakerList();
+
+          // 聚焦到新添加的输入框
+          const lastInput = this.speakerList.querySelector(
+            ".speaker-item:last-child .speaker-name-input",
+          );
+          if (lastInput) lastInput.focus();
+        }
+
+        removeSpeaker(index) {
+          this.speakers.splice(index, 1);
+          this.renderSpeakerList();
+        }
+
+        clearAgenda() {
+          if (this.speakers.length === 0) return;
+          if (confirm("确定要清空所有议程吗？此操作不可恢复。")) {
+            this.speakers = [];
+            this.renderSpeakerList();
+          }
+        }
+
+        exportAsJson() {
+          if (this.speakers.length === 0) {
+            alert("没有议程可导出");
+            return;
+          }
+
+          const data = {
+            speakers: this.speakers,
+            exportTime: new Date().toLocaleString(),
+          };
+
+          this.downloadFile(
+            JSON.stringify(data, null, 2),
+            `会议议程_${this.getTimestamp()}.json`,
+            "application/json",
+          );
+        }
+
+        exportAsCsv() {
+          if (this.speakers.length === 0) {
+            alert("没有议程可导出");
+            return;
+          }
+
+          // CSV Header
+          let csvContent = "姓名,分钟,秒数\n";
+
+          // CSV Body
+          this.speakers.forEach((speaker) => {
+            // Escape quotes in name: "Name" -> ""Name""
+            const name = speaker.name
+              ? `"${speaker.name.replace(/"/g, '""')}"`
+              : '""';
+            const minutes = speaker.minutes || 0;
+            const seconds = speaker.seconds || 0;
+            csvContent += `${name},${minutes},${seconds}\n`;
+          });
+
+          // Add BOM for Excel UTF-8 compatibility
+          this.downloadFile(
+            "\uFEFF" + csvContent,
+            `会议议程_${this.getTimestamp()}.csv`,
+            "text/csv;charset=utf-8;",
+          );
+        }
+
+        downloadFile(content, filename, type) {
+          const blob = new Blob([content], { type: type });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+        }
+
+        getTimestamp() {
+          return new Date().toLocaleDateString().replace(/\//g, "-");
+        }
+
+        handleFileDragOver(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          // Only highlight if dragging files
+          if (
+            e.dataTransfer.types &&
+            Array.from(e.dataTransfer.types).includes("Files")
+          ) {
+            this.panel.classList.add("dragging-file");
+          }
+        }
+
+        handleFileDragLeave(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.target === this.panel) {
+            this.panel.classList.remove("dragging-file");
+          }
+        }
+
+        handleFileDrop(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.panel.classList.remove("dragging-file");
+
+          if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0];
+            this.processFile(file);
+          }
+        }
+
+        importAgenda(e) {
+          const file = e.target.files[0];
+          if (file) {
+            this.processFile(file);
+          }
+          e.target.value = ""; // 重置以允许重复导入同一文件
+        }
+
+        processFile(file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            try {
+              const content = event.target.result;
+              if (file.name.endsWith(".csv")) {
+                this.parseCsv(content);
+              } else {
+                // Default to JSON
+                const data = JSON.parse(content);
+                if (data.speakers && Array.isArray(data.speakers)) {
+                  this.speakers = data.speakers;
+                  this.renderSpeakerList();
+                  alert("导入 JSON 成功！");
+                } else {
+                  alert("无效的 JSON 议程文件");
+                }
+              }
+            } catch (error) {
+              alert("导入失败：文件格式错误");
+              console.error("导入议程失败:", error);
+            }
+          };
+          reader.readAsText(file);
+          e.target.value = ""; // 重置以允许重复导入同一文件
+        }
+
+        parseCsv(content) {
+          const lines = content.split(/\r\n|\n/);
+          const newSpeakers = [];
+
+          // Iterate lines, skipping header if likely present
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            // Simple check for header line (contains "姓名" or "Name")
+            if (
+              i === 0 &&
+              (line.includes("姓名") || line.toLowerCase().includes("name"))
+            ) {
+              continue;
+            }
+
+            // Simple CSV parser: handles quoted fields
+            const parts = [];
+            let current = "";
+            let inQuote = false;
+
+            for (let char of line) {
+              if (char === '"') {
+                inQuote = !inQuote;
+              } else if (char === "," && !inQuote) {
+                parts.push(current);
+                current = "";
+              } else {
+                current += char;
+              }
+            }
+            parts.push(current);
+
+            if (parts.length >= 3) {
+              // Extract data: Name (remove quotes), Minutes, Seconds
+              let name = parts[0].trim();
+              if (name.startsWith('"') && name.endsWith('"')) {
+                name = name.slice(1, -1).replace(/""/g, '"');
+              }
+
+              const minutes = parseInt(parts[1]) || 0;
+              const seconds = parseInt(parts[2]) || 0;
+
+              newSpeakers.push({ name, minutes, seconds });
+            }
+          }
+
+          if (newSpeakers.length > 0) {
+            this.speakers = newSpeakers;
+            this.renderSpeakerList();
+            alert("导入 CSV 成功！");
+          } else {
+            alert("未从 CSV 文件中读取到有效数据");
+          }
+        }
+
+        applyAndClose() {
+          // 先从配置面板 DOM 同步最新编辑到 this.speakers，避免漏掉未触发的 input 等
+          this.flushSpeakerListFromDOM();
+
+          // 过滤掉无效的演讲者（姓名为空的）
+          this.speakers = this.speakers.filter((s) => s.name && s.name.trim());
+
+          // 保存到 localStorage
+          this.saveToStorage();
+
+          // 更新全局配置
+          window.TIMEKEEPER_CONFIG = window.TIMEKEEPER_CONFIG || {};
+          window.TIMEKEEPER_CONFIG.speakers = [...this.speakers];
+
+          if (!window.timeKeeper) {
+            this.closePanel();
+            return;
+          }
+
+          const tk = window.timeKeeper;
+          // 先写入议程与模式，再 reset，这样 reset 内对“是否议程模式”的判断是准确的
+          tk.agendaSpeakers = [...this.speakers];
+          tk.isAgendaMode = this.speakers.length > 0;
+
+          tk.reset();
+
+          if (this.speakers.length > 0) {
+            tk.currentSpeakerIndex = 0;
+            tk.setCurrentSpeaker(0);
+            const first = this.speakers[0];
+            const totalSeconds =
+              (parseInt(first.minutes, 10) || 0) * 60 +
+              (parseInt(first.seconds, 10) || 0);
+            tk.timeLeft = totalSeconds;
+            tk.initialTime = totalSeconds;
+            tk.updateDisplay();
+          } else {
+            tk.exitAgendaMode();
+          }
+          tk.updateButtonStates();
+
+          this.closePanel();
+        }
+
+        // 将配置面板中当前列表的输入框内容写回 this.speakers（保存并应用前同步）
+        flushSpeakerListFromDOM() {
+          const items = this.speakerList.querySelectorAll(".speaker-item");
+          this.speakers = Array.from(items).map((el) => {
+            const nameEl = el.querySelector(".speaker-name-input");
+            const minEl = el.querySelector(
+              '.speaker-time-input[data-field="minutes"]',
+            );
+            const secEl = el.querySelector(
+              '.speaker-time-input[data-field="seconds"]',
+            );
+            return {
+              name: nameEl ? nameEl.value.trim() : "",
+              minutes: minEl ? parseInt(minEl.value, 10) || 0 : 0,
+              seconds: secEl ? parseInt(secEl.value, 10) || 0 : 0,
+            };
+          });
+        }
+
+        escapeHtml(text) {
+          const div = document.createElement("div");
+          div.textContent = text || "";
+          return div.innerHTML;
+        }
+      }
+
+      // 初始化滚动指示器
+      document.addEventListener("DOMContentLoaded", function () {
+        const records = document.querySelector(".records");
+        const scrollIndicator = document.querySelector(".scroll-indicator");
+
+        function updateScrollIndicator() {
+          if (records.scrollHeight > records.clientHeight) {
+            if (
+              records.scrollHeight - records.scrollTop - records.clientHeight >
+              10
+            ) {
+              scrollIndicator.style.opacity = "1";
+            } else {
+              scrollIndicator.style.opacity = "0";
+            }
+          } else {
+            scrollIndicator.style.opacity = "0";
+          }
+        }
+
+        records.addEventListener("scroll", updateScrollIndicator);
+        const recordList = document.getElementById("recordList");
+        const observer = new MutationObserver(updateScrollIndicator);
+        observer.observe(recordList, { childList: true });
+
+        // 初始化议程管理器
+        window.agendaManager = new AgendaManager();
+      });
+    </script>
+  </body>
+</html>
