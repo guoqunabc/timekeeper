@@ -1,0 +1,25 @@
+{
+  "speakers": [
+    {
+      "name": "开场致辞",
+      "minutes": 5,
+      "seconds": 0
+    },
+    {
+      "name": "产品介绍",
+      "minutes": 10,
+      "seconds": 30
+    },
+    {
+      "name": "技术分享",
+      "minutes": 20,
+      "seconds": 0
+    },
+    {
+      "name": "圆桌讨论",
+      "minutes": 45,
+      "seconds": 0
+    }
+  ],
+  "exportTime": "2026-01-27 12:00:00"
+}
