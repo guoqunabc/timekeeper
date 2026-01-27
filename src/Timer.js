@@ -146,12 +146,25 @@ class Timer {
     this.confirmYesBtn.addEventListener("click", () => {
       this.confirmYesBtn.clicked = true;
       this.hideConfirmDialog();
-      this.stop();
+
+      // 根据当前操作执行相应的动作
+      if (this.currentAction === 'clearRecords') {
+        this.executeClearRecords();
+      } else if (this.currentAction === 'deleteRecord') {
+        this.executeDeleteRecord();
+      } else {
+        this.stop();
+      }
+
+      // 重置当前操作
+      delete this.currentAction;
     });
 
     this.confirmNoBtn.addEventListener("click", () => {
       this.confirmYesBtn.clicked = false;
       this.hideConfirmDialog();
+      // 重置当前操作
+      delete this.currentAction;
     });
 
     // 添加键盘快捷键支持
@@ -221,6 +234,13 @@ class Timer {
   }
 
   showConfirmDialog() {
+    // 设置默认的停止计时确认文本
+    if (!this.currentAction) {
+      this.confirmDialog.querySelector('p').textContent = "确定结束计时吗？";
+      this.confirmYesBtn.textContent = "确定";
+      this.confirmNoBtn.textContent = "取消";
+    }
+
     this.confirmDialog.style.display = "block";
     this.confirmOverlay.style.display = "block";
     document.addEventListener("keydown", this.keydownHandler);
@@ -230,19 +250,37 @@ class Timer {
     this.confirmDialog.style.display = "none";
     this.confirmOverlay.style.display = "none";
     document.removeEventListener("keydown", this.keydownHandler);
-    if (!this.confirmYesBtn.clicked) {
+
+    // 只在暂停/停止计时场景下恢复计时状态
+    // 在清空记录或删除记录场景下不需要执行这些操作
+    if (!this.confirmYesBtn.clicked && !this.currentAction) {
       this.startTime += Date.now() - this.pauseTime;
       this.isRunning = true;
       this.updateButtonStates();
       this.intervalId = setInterval(() => this.updateTimer(), 1000);
     }
+
+    // 清理临时变量，避免影响其他操作
+    delete this.currentAction;
+    delete this.recordIndexToDelete;
   }
 
   handleKeydown(event) {
     if (event.key === "Enter") {
       this.confirmYesBtn.clicked = true;
       this.hideConfirmDialog();
-      this.stop();
+
+      // 根据当前操作执行相应的动作
+      if (this.currentAction === 'clearRecords') {
+        this.executeClearRecords();
+      } else if (this.currentAction === 'deleteRecord') {
+        this.executeDeleteRecord();
+      } else {
+        this.stop();
+      }
+
+      // 重置当前操作
+      delete this.currentAction;
     }
   }
 
@@ -465,20 +503,54 @@ class Timer {
 
   // 删除指定记录
   deleteRecord(index) {
-    if (confirm("确定要删除这条记录吗？")) {
-      this.records.splice(index, 1);
-      this.saveRecords();
-      this.updateRecordList();
-    }
+    this.showDeleteConfirmDialog(index);
+  }
+
+  // 显示删除单条记录的确认对话框
+  showDeleteConfirmDialog(index) {
+    this.confirmDialog.querySelector('p').textContent = "确定要删除这条记录吗？";
+    this.confirmYesBtn.textContent = "确定";
+    this.confirmNoBtn.textContent = "取消";
+
+    // 临时存储记录索引和操作类型
+    this.currentAction = 'deleteRecord';
+    this.recordIndexToDelete = index;
+
+    this.showConfirmDialog();
+  }
+
+  // 执行删除记录操作
+  executeDeleteRecord() {
+    this.records.splice(this.recordIndexToDelete, 1);
+    this.saveRecords();
+    this.updateRecordList();
+
+    // 清理临时变量
+    delete this.recordIndexToDelete;
+  }
+
+  // 显示清空确认对话框
+  showClearConfirmDialog() {
+    this.confirmDialog.querySelector('p').textContent = "确定要清空所有记录吗？此操作不可恢复！";
+    this.confirmYesBtn.textContent = "确定";
+    this.confirmNoBtn.textContent = "取消";
+
+    // 临时存储一个标志，用于区分是停止计时还是清空记录的确认
+    this.currentAction = 'clearRecords';
+
+    this.showConfirmDialog();
   }
 
   // 清空所有记录
   clearAllRecords() {
-    if (confirm("确定要清空所有记录吗？此操作不可恢复！")) {
-      this.records = [];
-      this.saveRecords();
-      this.updateRecordList();
-    }
+    this.showClearConfirmDialog();
+  }
+
+  // 执行清空记录操作
+  executeClearRecords() {
+    this.records = [];
+    this.saveRecords();
+    this.updateRecordList();
   }
 
   // 导出记录为CSV
