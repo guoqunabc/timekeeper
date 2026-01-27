@@ -404,6 +404,12 @@ class Timer {
   }
 
   stop() {
+    // 如果当前操作是清空记录，则不添加新的记录
+    if (this.currentAction === 'clearRecords') {
+      this.reset();
+      return;
+    }
+
     const endTime = this.pauseTime;
     const totalTime = Math.floor((endTime - this.startTime) / 1000);
     const overtimeSeconds = Math.max(0, totalTime - this.initialTime);
