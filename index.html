@@ -1051,7 +1051,11 @@
           this.exportBtn.addEventListener("click", () =>
             this.showExportDialog(),
           );
-          this.clearBtn.addEventListener("click", () => this.clearAgenda());
+          this.clearBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.clearAgenda();
+          });
           this.applyBtn.addEventListener("click", () => this.applyAndClose());
           this.fileInput.addEventListener("change", (e) =>
             this.importAgenda(e),
@@ -1301,10 +1305,15 @@
 
         clearAgenda() {
           if (this.speakers.length === 0) return;
-          if (confirm("确定要清空所有议程吗？此操作不可恢复。")) {
-            this.speakers = [];
-            this.renderSpeakerList();
-          }
+          
+          // 使用 requestAnimationFrame 确保确认对话框在下一帧显示
+          requestAnimationFrame(() => {
+            const confirmed = confirm("确定要清空所有议程吗？此操作不可恢复。");
+            if (confirmed) {
+              this.speakers = [];
+              this.renderSpeakerList();
+            }
+          });
         }
 
         exportAsJson() {
