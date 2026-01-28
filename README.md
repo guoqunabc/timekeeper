@@ -5,7 +5,7 @@
 一个专业的会议演讲计时器，功能完善、界面美观，适合各种会议场景。**纯HTML/JS，零依赖，双击即用！**
 
 [![GitHub](https://img.shields.io/badge/GitHub-guoqunabc/timekeeper-blue.svg)](https://github.com/guoqunabc/timekeeper)
-[![GitLab](https://img.shields.io/badge/GitLab-guoqun1/time_keeper-orange.svg)](https://git.n.xiaomi.com/guoqun1/time_keeper)
+
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
@@ -24,8 +24,7 @@
 
    ```bash
    git clone https://github.com/guoqunabc/timekeeper.git
-   # 或
-   git clone git@git.n.xiaomi.com:guoqun1/time_keeper.git
+
    ```
 
 2. **打开文件**
@@ -401,7 +400,7 @@ cd tests
 ## 📧 联系方式
 
 - **GitHub Issues**: [提交问题](https://github.com/guoqunabc/timekeeper/issues)
-- **GitLab Issues**: [提交问题](https://git.n.xiaomi.com/guoqun1/time_keeper/issues)
+
 
 ---
 

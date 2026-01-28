@@ -5,7 +5,7 @@ English | [简体中文](./README.md)
 A professional meeting speech timer with comprehensive features and beautiful interface, suitable for various meeting scenarios. **Pure HTML/JS, zero dependencies, double-click to use!**
 
 [![GitHub](https://img.shields.io/badge/GitHub-guoqunabc/timekeeper-blue.svg)](https://github.com/guoqunabc/timekeeper)
-[![GitLab](https://img.shields.io/badge/GitLab-guoqun1/time_keeper-orange.svg)](https://git.n.xiaomi.com/guoqun1/time_keeper)
+
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
@@ -24,8 +24,7 @@ Visit online demo: [TimeKeeper Demo](https://guoqunabc.github.io/timekeeper/)
 
    ```bash
    git clone https://github.com/guoqunabc/timekeeper.git
-   # or
-   git clone git@git.n.xiaomi.com:guoqun1/time_keeper.git
+
    ```
 
 2. **Open File**
@@ -366,7 +365,7 @@ Issues and Pull Requests are welcome!
 ## 📧 Contact
 
 - **GitHub Issues**: [Submit Issue](https://github.com/guoqunabc/timekeeper/issues)
-- **GitLab Issues**: [Submit Issue](https://git.n.xiaomi.com/guoqun1/time_keeper/issues)
+
 
 ---
 
