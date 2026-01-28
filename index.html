@@ -494,8 +494,6 @@
         }
       }
 
-
-
       /* Toast 提示框 */
       .toast-message {
         position: fixed;
@@ -1343,17 +1341,16 @@
         color: rgba(255, 255, 255, 0.15);
         z-index: 2000;
         pointer-events: none;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         letter-spacing: 0.5px;
       }
       body.light-theme .powered-by {
-        color: rgba(255, 255, 255, 0.3);
+        color: rgba(0, 0, 0, 0.4);
       }
     </style>
 
-
-    <script src="src/Timer.js"></script>
+    <script src="src/Timer.js?v=1.1"></script>
     <script>
       // ========== AgendaManager 议程配置管理模块 ==========
       class AgendaManager {
@@ -1732,7 +1729,8 @@
         exportAsJson() {
           if (this.speakers.length === 0) {
             const lang = localStorage.getItem("language") || "zh";
-            const msg = lang === "zh" ? "没有议程可导出" : "No agenda to export";
+            const msg =
+              lang === "zh" ? "没有议程可导出" : "No agenda to export";
             if (window.timeKeeper && window.timeKeeper.showToast) {
               window.timeKeeper.showToast(msg);
             } else {
@@ -1756,7 +1754,8 @@
         exportAsCsv() {
           if (this.speakers.length === 0) {
             const lang = localStorage.getItem("language") || "zh";
-            const msg = lang === "zh" ? "没有议程可导出" : "No agenda to export";
+            const msg =
+              lang === "zh" ? "没有议程可导出" : "No agenda to export";
             if (window.timeKeeper && window.timeKeeper.showToast) {
               window.timeKeeper.showToast(msg);
             } else {
@@ -1989,9 +1988,13 @@
         }
 
         escapeHtml(text) {
-          const div = document.createElement("div");
-          div.textContent = text || "";
-          return div.innerHTML;
+          if (!text && text !== 0) return "";
+          return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
         }
       }
 
@@ -2182,6 +2185,10 @@
           currentLang = currentLang === "zh" ? "en" : "zh";
           localStorage.setItem("language", currentLang);
           applyLanguage(currentLang);
+
+          if (window.timeKeeper) {
+            window.timeKeeper.updateRecordList();
+          }
 
           // 添加激活动画
           langBtn.classList.add("active");

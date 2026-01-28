@@ -198,6 +198,9 @@ class Timer {
       // 避免在输入框中触发
       if (event.target.tagName === "INPUT") return;
 
+      // 如果确认弹窗已显示，不响应全局快捷键
+      if (this.confirmDialog.style.display === "block") return;
+
       switch (event.key) {
         case " ": // 空格键开始/停止
           event.preventDefault();
@@ -332,7 +335,12 @@ class Timer {
 
       // 验证时间输入的有效性
       if (this.timeLeft <= 0) {
-        this.showToast(this.getLocalizedText("请设置有效的时间（大于0秒）", "Please set a valid time (>0s)"));
+        this.showToast(
+          this.getLocalizedText(
+            "请设置有效的时间（大于0秒）",
+            "Please set a valid time (>0s)",
+          ),
+        );
         return;
       }
 
@@ -449,7 +457,8 @@ class Timer {
     const endTime = this.pauseTime;
     const totalTime = Math.floor((endTime - this.startTime) / 1000);
     const overtimeSeconds = Math.max(0, totalTime - this.initialTime);
-    const speakerName = this.speakerNameInput.value.trim() || "未命名";
+    const defaultName = this.getLocalizedText("未命名", "Unnamed");
+    const speakerName = this.speakerNameInput.value.trim() || defaultName;
 
     this.records.push({
       speakerName,
@@ -513,23 +522,39 @@ class Timer {
   }
 
   updateRecordList() {
+    const lang = localStorage.getItem("language") || "zh";
+    const isEn = lang === "en";
+
     this.recordList.innerHTML = this.records
       .map((record, index) => {
-        const speakerName = this.escapeHtml(record.speakerName);
+        let nameToShow = record.speakerName;
+        if (isEn && nameToShow === "未命名") nameToShow = "Unnamed";
+        else if (!isEn && nameToShow === "Unnamed") nameToShow = "未命名";
+        
+        const speakerName = this.escapeHtml(nameToShow);
         const totalMinutes = Math.floor(record.totalTime / 60);
         const totalSeconds = record.totalTime % 60;
         const overtimeMinutes = Math.floor(record.overtimeSeconds / 60);
         const overtimeSeconds = record.overtimeSeconds % 60;
 
-        const overtimeText =
-          record.overtimeSeconds > 0
-            ? `<span style="color: #ff4444">· 超时${overtimeMinutes}分${overtimeSeconds}秒</span>`
-            : `· 准时完成`;
+        const labelDuration = isEn ? "Duration" : "时长";
+        const labelMin = isEn ? "m" : "分";
+        const labelSec = isEn ? "s" : "秒";
+        const titleDelete = isEn ? "Delete record" : "删除记录";
+
+        let overtimeText;
+        if (record.overtimeSeconds > 0) {
+          const labelOvertime = isEn ? "Overtime" : "超时";
+          overtimeText = `<span style="color: #ff4444">· ${labelOvertime} ${overtimeMinutes}${labelMin}${overtimeSeconds}${labelSec}</span>`;
+        } else {
+          const labelOnTime = isEn ? "On time" : "准时完成";
+          overtimeText = `· ${labelOnTime}`;
+        }
 
         return `
                 <div class="record-item">
-                    <span class="record-content">${speakerName} [${index + 1}] · 时长${totalMinutes}分${totalSeconds}秒 ${overtimeText}</span>
-                    <button class="delete-record-btn" onclick="timeKeeper.deleteRecord(${index})" title="删除记录">×</button>
+                    <span class="record-content">${speakerName} [${index + 1}] · ${labelDuration} ${totalMinutes}${labelMin}${totalSeconds}${labelSec} ${overtimeText}</span>
+                    <button class="delete-record-btn" onclick="timeKeeper.deleteRecord(${index})" title="${titleDelete}">×</button>
                 </div>
             `;
       })
@@ -537,10 +562,15 @@ class Timer {
   }
 
   // HTML转义函数，防止XSS
+  // HTML转义函数，防止XSS
   escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
+    if (!text && text !== 0) return "";
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
   // 删除指定记录
@@ -680,7 +710,13 @@ class Timer {
       URL.revokeObjectURL(link.href);
     } catch (error) {
       console.error("导出失败:", error);
-      this.showToast(this.getLocalizedText("导出失败，请重试", "Export failed, please try again"), 'error');
+      this.showToast(
+        this.getLocalizedText(
+          "导出失败，请重试",
+          "Export failed, please try again",
+        ),
+        "error",
+      );
     }
   }
 
