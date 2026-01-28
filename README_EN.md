@@ -12,11 +12,13 @@ A professional meeting speech timer with comprehensive features and beautiful in
 
 ## 🎯 Main Features
 
-### 1️⃣ **Basic Timer** - Simple & Easy
+### 1️⃣ **Basic Timer** - Core Feature 🌟
 - Enter speaker name and duration
 - Click "Start" or press spacebar
 - Large screen display, perfect for projection
-- Red flashing warning when overtime
+- **Smart Alert System**:
+  - 🟡 **Last 1 Minute**: Numbers turn yellow and flash (Gentle reminder)
+  - 🔴 **Overtime Alert**: Numbers turn red with dynamic flash (Core feature, Strong warning)
 
 ### 2️⃣ **Agenda Mode** - Essential for Meetings
 - Pre-configure multiple speakers' agenda
@@ -30,17 +32,12 @@ A professional meeting speech timer with comprehensive features and beautiful in
 - Export as CSV (Excel) or JSON
 - Local persistence, refresh-proof
 
-### 4️⃣ **Smart Alerts** - Time Management
-- Yellow warning flash in last 1 minute
-- Red dynamic alert when overtime
-- Prominent visual effects, easy to recognize
-
-### 5️⃣ **Language Switch** - i18n Support 🆕
+### 4️⃣ **Language Switch** - i18n Support 🆕
 - One-click switch between Chinese and English
 - Auto save language preference
 - Covers all interface text
 
-### 6️⃣ **Zero Dependencies** - Ready to Use
+### 5️⃣ **Zero Dependencies** - Ready to Use
 - No software installation required
 - No server configuration needed
 - Double-click HTML file to start

@@ -59,19 +59,25 @@ class Timer {
       localStorage.setItem("timerRecords", data);
     } catch (error) {
       console.error("保存记录失败:", error);
-      
+
       // 检测是否是配额超限错误
-      if (error.name === 'QuotaExceededError' || error.code === 22) {
-        alert(this.getLocalizedText(
-          "存储空间已满！请清空部分记录后再试。",
-          "Storage quota exceeded! Please clear some records."
-        ));
+      if (error.name === "QuotaExceededError" || error.code === 22) {
+        this.showToast(
+          this.getLocalizedText(
+            "存储空间已满！请清空部分记录后再试。",
+            "Storage quota exceeded! Please clear some records.",
+          ),
+          "error",
+        );
       } else {
         // 其他错误（如隐私模式）
-        alert(this.getLocalizedText(
-          "无法保存记录。请检查浏览器设置是否允许存储数据。",
-          "Cannot save records. Please check browser storage settings."
-        ));
+        this.showToast(
+          this.getLocalizedText(
+            "无法保存记录。请检查浏览器设置是否允许存储数据。",
+            "Cannot save records. Please check browser storage settings.",
+          ),
+          "error",
+        );
       }
     }
   }
@@ -168,9 +174,9 @@ class Timer {
       this.hideConfirmDialog();
 
       // 根据当前操作执行相应的动作
-      if (this.currentAction === 'clearRecords') {
+      if (this.currentAction === "clearRecords") {
         this.executeClearRecords();
-      } else if (this.currentAction === 'deleteRecord') {
+      } else if (this.currentAction === "deleteRecord") {
         this.executeDeleteRecord();
       } else {
         this.stop();
@@ -262,12 +268,12 @@ class Timer {
   showConfirmDialog() {
     // 设置默认的停止计时确认文本（支持国际化）
     if (!this.currentAction) {
-      this.confirmDialog.querySelector('p').textContent = 
-        this.getLocalizedText("确定结束计时吗？", "Stop timing?");
-      this.confirmYesBtn.textContent = 
-        this.getLocalizedText("确定", "Confirm");
-      this.confirmNoBtn.textContent = 
-        this.getLocalizedText("取消", "Cancel");
+      this.confirmDialog.querySelector("p").textContent = this.getLocalizedText(
+        "确定结束计时吗？",
+        "Stop timing?",
+      );
+      this.confirmYesBtn.textContent = this.getLocalizedText("确定", "Confirm");
+      this.confirmNoBtn.textContent = this.getLocalizedText("取消", "Cancel");
     }
 
     this.confirmDialog.style.display = "block";
@@ -301,9 +307,9 @@ class Timer {
       this.hideConfirmDialog();
 
       // 根据当前操作执行相应的动作
-      if (this.currentAction === 'clearRecords') {
+      if (this.currentAction === "clearRecords") {
         this.executeClearRecords();
-      } else if (this.currentAction === 'deleteRecord') {
+      } else if (this.currentAction === "deleteRecord") {
         this.executeDeleteRecord();
       } else {
         this.stop();
@@ -326,7 +332,7 @@ class Timer {
 
       // 验证时间输入的有效性
       if (this.timeLeft <= 0) {
-        alert("请设置有效的时间（大于0秒）");
+        this.showToast(this.getLocalizedText("请设置有效的时间（大于0秒）", "Please set a valid time (>0s)"));
         return;
       }
 
@@ -435,7 +441,7 @@ class Timer {
 
   stop() {
     // 如果当前操作是清空记录，则不添加新的记录
-    if (this.currentAction === 'clearRecords') {
+    if (this.currentAction === "clearRecords") {
       this.reset();
       return;
     }
@@ -545,15 +551,15 @@ class Timer {
   // 显示删除单条记录的确认对话框
   showDeleteConfirmDialog(index) {
     // 更新对话框文本（支持国际化）
-    this.confirmDialog.querySelector('p').textContent = 
-      this.getLocalizedText("确定要删除这条记录吗？", "Delete this record?");
-    this.confirmYesBtn.textContent = 
-      this.getLocalizedText("确定", "Confirm");
-    this.confirmNoBtn.textContent = 
-      this.getLocalizedText("取消", "Cancel");
+    this.confirmDialog.querySelector("p").textContent = this.getLocalizedText(
+      "确定要删除这条记录吗？",
+      "Delete this record?",
+    );
+    this.confirmYesBtn.textContent = this.getLocalizedText("确定", "Confirm");
+    this.confirmNoBtn.textContent = this.getLocalizedText("取消", "Cancel");
 
     // 临时存储记录索引和操作类型
-    this.currentAction = 'deleteRecord';
+    this.currentAction = "deleteRecord";
     this.recordIndexToDelete = index;
 
     this.showConfirmDialog();
@@ -572,18 +578,15 @@ class Timer {
   // 显示清空确认对话框
   showClearConfirmDialog() {
     // 更新对话框文本（支持国际化）
-    this.confirmDialog.querySelector('p').textContent = 
-      this.getLocalizedText(
-        "确定要清空所有记录吗？此操作不可恢复！", 
-        "Clear all records? This action cannot be undone!"
-      );
-    this.confirmYesBtn.textContent = 
-      this.getLocalizedText("确定", "Confirm");
-    this.confirmNoBtn.textContent = 
-      this.getLocalizedText("取消", "Cancel");
+    this.confirmDialog.querySelector("p").textContent = this.getLocalizedText(
+      "确定要清空所有记录吗？此操作不可恢复！",
+      "Clear all records? This action cannot be undone!",
+    );
+    this.confirmYesBtn.textContent = this.getLocalizedText("确定", "Confirm");
+    this.confirmNoBtn.textContent = this.getLocalizedText("取消", "Cancel");
 
     // 设置当前操作标志
-    this.currentAction = 'clearRecords';
+    this.currentAction = "clearRecords";
 
     // 显示对话框
     this.showConfirmDialog();
@@ -601,10 +604,42 @@ class Timer {
     this.updateRecordList();
   }
 
+  // 显示 Toast 提示
+  showToast(message) {
+    // 移除现有的 toast（避免堆叠）
+    const existingToast = document.querySelector(".toast-message");
+    if (existingToast) {
+      document.body.removeChild(existingToast);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = "toast-message";
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    // 强制重绘触发动画
+    requestAnimationFrame(() => {
+      toast.classList.add("show");
+    });
+
+    // 3秒后自动消失
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 300);
+    }, 3000);
+  }
+
   // 导出记录为CSV
   exportRecords() {
     if (this.records.length === 0) {
-      alert("没有记录可导出");
+      this.showToast(
+        this.getLocalizedText("没有记录可导出", "No records to export"),
+      );
       return;
     }
 
@@ -645,7 +680,7 @@ class Timer {
       URL.revokeObjectURL(link.href);
     } catch (error) {
       console.error("导出失败:", error);
-      alert("导出失败，请重试");
+      this.showToast(this.getLocalizedText("导出失败，请重试", "Export failed, please try again"), 'error');
     }
   }
 

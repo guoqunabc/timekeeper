@@ -2,9 +2,9 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8" />
-    <meta 
-      name="viewport" 
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" 
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <title>会议计时器</title>
     <style>
@@ -41,7 +41,9 @@
         -webkit-tap-highlight-color: transparent;
         -webkit-touch-callout: none;
         /* 主题切换动画 */
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
       }
 
       .timer-container {
@@ -152,6 +154,9 @@
       .time-input-group {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
       }
 
       input {
@@ -226,11 +231,13 @@
       #startBtn,
       #stopBtn {
         font-size: 1em;
-        padding: 8px 20px;
+        padding: 8px 24px;
+        min-width: 80px;
         height: 58px;
         box-sizing: border-box;
         line-height: 1;
         font-weight: bold;
+        white-space: nowrap;
       }
 
       #startBtn {
@@ -346,7 +353,9 @@
         align-items: center;
         position: relative;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
       }
 
       .record-item:hover {
@@ -417,6 +426,7 @@
         margin-left: 60px;
         display: flex;
         align-items: center;
+        gap: 15px;
       }
 
       .confirm-dialog {
@@ -484,163 +494,37 @@
         }
       }
 
-      @media (max-width: 800px) {
-        #recordList {
-          grid-template-columns: 1fr;
-        }
+
+
+      /* Toast 提示框 */
+      .toast-message {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-20px);
+        background-color: rgba(50, 50, 50, 0.9);
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        z-index: 2000;
+        opacity: 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        pointer-events: none;
       }
 
-      /* ========== 移动端优化 ========== */
-      @media (max-width: 768px) {
-        /* 配置面板全屏显示 */
-        .config-panel {
-          width: 95%;
-          max-width: 95%;
-          left: 50%;
-          transform: translateX(-50%);
-          max-height: 90vh;
-        }
-
-        /* 增大按钮触摸区域 */
-        button {
-          min-height: 48px;
-          padding: 12px 20px;
-        }
-
-        .config-toggle-btn,
-        .lang-toggle-btn,
-        .theme-toggle-btn {
-          width: 48px;
-          height: 48px;
-          font-size: 22px;
-        }
-
-        /* 时间输入区域优化 */
-        .time-input {
-          font-size: 1.8em;
-          margin-top: 80px;
-        }
-
-        .time-input input {
-          font-size: 1.2em;
-          min-width: 60px;
-          padding: 10px;
-        }
-
-        #speakerName {
-          font-size: 1.1em;
-          padding: 12px;
-          min-height: 48px;
-        }
-
-        /* 记录区域优化 */
-        .records-section {
-          height: 30vh;
-        }
-
-        .records {
-          padding: 10px 20px 0;
-        }
-
-        .record-item {
-          padding: 12px;
-          font-size: 0.95em;
-        }
-
-        .delete-record-btn {
-          width: 32px;
-          height: 32px;
-          font-size: 20px;
-        }
-
-        /* 导出弹窗优化 */
-        .export-dialog {
-          width: 90%;
-          max-width: 90%;
-        }
-
-        /* 配置面板内容优化 */
-        .config-panel-content {
-          padding: 15px;
-        }
-
-        .speaker-item input {
-          font-size: 1em;
-          padding: 10px;
-        }
-
-        .speaker-controls button {
-          min-width: 36px;
-          height: 36px;
-        }
+      .toast-message.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
       }
 
-      /* 小屏手机优化 */
-      @media (max-width: 480px) {
-        /* 计时器字体大小微调 */
-        #timer {
-          font-size: 28vw;
-        }
-
-        /* 进一步增大按钮 */
-        #startBtn,
-        #stopBtn {
-          font-size: 1.1em;
-          padding: 14px 24px;
-        }
-
-        /* 配置面板按钮区域 */
-        .config-panel-actions {
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .config-panel-actions button {
-          width: 100%;
-        }
-
-        /* 记录控制按钮 */
-        .record-controls {
-          flex-wrap: wrap;
-        }
-
-        .record-controls button {
-          flex: 1;
-          min-width: 100px;
-        }
-
-        /* 时间输入组优化 */
-        .time-input-group {
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-
-        .time-input-group input {
-          min-width: 50px;
-        }
+      body.light-theme .toast-message {
+        background-color: rgba(255, 255, 255, 0.95);
+        color: #333;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.1);
       }
-
-      /* 横屏适配 */
-      @media (max-height: 500px) and (orientation: landscape) {
-        .main-content {
-          margin-top: 0;
-        }
-
-        #timer {
-          font-size: 20vh;
-          height: 35vh;
-        }
-
-        .time-input {
-          margin-top: 40px;
-          font-size: 1.5em;
-        }
-
-        .records-section {
-          height: 25vh;
-        }
-      }
-
 
       @keyframes overtime-blink {
         0%,
@@ -1107,12 +991,12 @@
       }
 
       body.light-theme .timer-container {
-        background: linear-gradient(135deg, #6495ED 0%, #4169E1 100%);
+        background: linear-gradient(135deg, #6495ed 0%, #4169e1 100%);
       }
 
       body.light-theme #timer {
         color: #fff;
-        text-shadow: 
+        text-shadow:
           0 2px 4px rgba(0, 0, 0, 0.1),
           0 4px 20px rgba(100, 149, 237, 0.3);
       }
@@ -1131,18 +1015,18 @@
 
       body.light-theme input:focus,
       body.light-theme #speakerName:focus {
-        border-color: #6495ED;
+        border-color: #6495ed;
         box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.15);
       }
 
       body.light-theme button {
-        background-color: #6495ED;
+        background-color: #6495ed;
         color: #fff;
-        border-color: #6495ED;
+        border-color: #6495ed;
       }
 
       body.light-theme button:hover {
-        background-color: #4169E1;
+        background-color: #4169e1;
       }
 
       body.light-theme #stopBtn {
@@ -1165,12 +1049,12 @@
 
       /* 导出按钮保持蓝色 */
       body.light-theme .export-btn {
-        background-color: #6495ED;
-        border-color: #6495ED;
+        background-color: #6495ed;
+        border-color: #6495ed;
       }
 
       body.light-theme .export-btn:hover {
-        background-color: #4169E1;
+        background-color: #4169e1;
       }
 
       body.light-theme .records-section {
@@ -1209,7 +1093,7 @@
       body.light-theme .lang-toggle-btn,
       body.light-theme .theme-toggle-btn {
         background: rgba(255, 255, 255, 0.95);
-        color: #6495ED;
+        color: #6495ed;
         border-color: rgba(100, 149, 237, 0.3);
       }
 
@@ -1217,7 +1101,7 @@
       body.light-theme .lang-toggle-btn:hover,
       body.light-theme .theme-toggle-btn:hover {
         background: rgba(255, 255, 255, 1);
-        color: #4169E1;
+        color: #4169e1;
         box-shadow: 0 4px 12px rgba(100, 149, 237, 0.2);
       }
 
@@ -1249,7 +1133,7 @@
       }
 
       body.light-theme .speaker-index {
-        background: #6495ED;
+        background: #6495ed;
         color: #fff;
       }
 
@@ -1262,13 +1146,13 @@
 
       body.light-theme .speaker-name-input:focus,
       body.light-theme .speaker-time-input:focus {
-        border-color: #6495ED;
+        border-color: #6495ed;
         box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.1);
       }
 
       /* 配置面板按钮优化 */
       body.light-theme .speaker-controls button {
-        background-color: #6495ED;
+        background-color: #6495ed;
         color: #fff;
       }
 
@@ -1448,7 +1332,27 @@
     </div>
     <div class="confirm-dialog-overlay" id="exportOverlay"></div>
 
-    <script src="会议议程配置.js"></script>
+    <!-- 署名 -->
+    <div class="powered-by">Powered by 黄龙中 & 过小凡</div>
+    <style>
+      .powered-by {
+        position: fixed;
+        bottom: 8px;
+        right: 12px;
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.15);
+        z-index: 2000;
+        pointer-events: none;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        letter-spacing: 0.5px;
+      }
+      body.light-theme .powered-by {
+        color: rgba(255, 255, 255, 0.3);
+      }
+    </style>
+
+
     <script src="src/Timer.js"></script>
     <script>
       // ========== AgendaManager 议程配置管理模块 ==========
@@ -1479,8 +1383,11 @@
           this.exportCancelBtn = document.getElementById("exportCancelBtn");
 
           // 清空确认对话框元素
-          this.clearConfirmDialog = document.getElementById("clearConfirmDialog");
-          this.clearConfirmOverlay = document.getElementById("clearConfirmOverlay");
+          this.clearConfirmDialog =
+            document.getElementById("clearConfirmDialog");
+          this.clearConfirmOverlay = document.getElementById(
+            "clearConfirmOverlay",
+          );
           this.clearConfirmYesBtn = document.getElementById("clearConfirmYes");
           this.clearConfirmNoBtn = document.getElementById("clearConfirmNo");
 
@@ -1538,7 +1445,10 @@
             if (e.key === "Escape") {
               if (this.exportDialog.style.display === "block") {
                 this.hideExportDialog();
-              } else if (this.clearConfirmDialog && this.clearConfirmDialog.style.display === "block") {
+              } else if (
+                this.clearConfirmDialog &&
+                this.clearConfirmDialog.style.display === "block"
+              ) {
                 this.hideClearConfirmDialog();
               } else if (this.isOpen) {
                 this.closePanel();
@@ -1770,9 +1680,9 @@
         showClearConfirmDialog() {
           if (!this.clearConfirmDialog) {
             // 创建确认对话框
-            const dialog = document.createElement('div');
-            dialog.className = 'confirm-dialog';
-            dialog.id = 'clearConfirmDialog';
+            const dialog = document.createElement("div");
+            dialog.className = "confirm-dialog";
+            dialog.id = "clearConfirmDialog";
             dialog.innerHTML = `
               <p>确定要清空所有议程吗？</p>
               <div class="confirm-dialog-buttons">
@@ -1782,45 +1692,52 @@
             `;
             document.body.appendChild(dialog);
 
-            const overlay = document.createElement('div');
-            overlay.className = 'confirm-dialog-overlay';
-            overlay.id = 'clearConfirmOverlay';
+            const overlay = document.createElement("div");
+            overlay.className = "confirm-dialog-overlay";
+            overlay.id = "clearConfirmOverlay";
             document.body.appendChild(overlay);
 
             this.clearConfirmDialog = dialog;
             this.clearConfirmOverlay = overlay;
-            this.clearConfirmYesBtn = document.getElementById('clearConfirmYes');
-            this.clearConfirmNoBtn = document.getElementById('clearConfirmNo');
+            this.clearConfirmYesBtn =
+              document.getElementById("clearConfirmYes");
+            this.clearConfirmNoBtn = document.getElementById("clearConfirmNo");
 
             // 绑定确认按钮事件
-            this.clearConfirmYesBtn.addEventListener('click', () => {
+            this.clearConfirmYesBtn.addEventListener("click", () => {
               this.clearAgenda();
               this.hideClearConfirmDialog();
             });
 
-            this.clearConfirmNoBtn.addEventListener('click', () => {
+            this.clearConfirmNoBtn.addEventListener("click", () => {
               this.hideClearConfirmDialog();
             });
 
-            overlay.addEventListener('click', () => {
+            overlay.addEventListener("click", () => {
               this.hideClearConfirmDialog();
             });
           }
 
-          this.clearConfirmDialog.style.display = 'block';
-          this.clearConfirmOverlay.style.display = 'block';
+          this.clearConfirmDialog.style.display = "block";
+          this.clearConfirmOverlay.style.display = "block";
         }
 
         hideClearConfirmDialog() {
           if (this.clearConfirmDialog) {
-            this.clearConfirmDialog.style.display = 'none';
-            this.clearConfirmOverlay.style.display = 'none';
+            this.clearConfirmDialog.style.display = "none";
+            this.clearConfirmOverlay.style.display = "none";
           }
         }
 
         exportAsJson() {
           if (this.speakers.length === 0) {
-            alert("没有议程可导出");
+            const lang = localStorage.getItem("language") || "zh";
+            const msg = lang === "zh" ? "没有议程可导出" : "No agenda to export";
+            if (window.timeKeeper && window.timeKeeper.showToast) {
+              window.timeKeeper.showToast(msg);
+            } else {
+              alert(msg);
+            }
             return;
           }
 
@@ -1838,7 +1755,13 @@
 
         exportAsCsv() {
           if (this.speakers.length === 0) {
-            alert("没有议程可导出");
+            const lang = localStorage.getItem("language") || "zh";
+            const msg = lang === "zh" ? "没有议程可导出" : "No agenda to export";
+            if (window.timeKeeper && window.timeKeeper.showToast) {
+              window.timeKeeper.showToast(msg);
+            } else {
+              alert(msg);
+            }
             return;
           }
 
@@ -2244,7 +2167,11 @@
             const p = clearDialog.querySelector("p");
             const yesBtn = document.getElementById("clearConfirmYes");
             const noBtn = document.getElementById("clearConfirmNo");
-            if (p) p.textContent = lang === "zh" ? "确定要清空所有议程吗？" : "Clear all agenda items?";
+            if (p)
+              p.textContent =
+                lang === "zh"
+                  ? "确定要清空所有议程吗？"
+                  : "Clear all agenda items?";
             if (yesBtn) yesBtn.textContent = t.confirmYes;
             if (noBtn) noBtn.textContent = t.confirmNo;
           }
@@ -2281,11 +2208,13 @@
           if (theme === "light") {
             document.body.classList.add("light-theme");
             themeBtn.textContent = "🌙";
-            themeBtn.title = lang === "zh" ? "切换到黑夜模式" : "Switch to dark mode";
+            themeBtn.title =
+              lang === "zh" ? "切换到黑夜模式" : "Switch to dark mode";
           } else {
             document.body.classList.remove("light-theme");
             themeBtn.textContent = "☀️";
-            themeBtn.title = lang === "zh" ? "切换到白天模式" : "Switch to light mode";
+            themeBtn.title =
+              lang === "zh" ? "切换到白天模式" : "Switch to light mode";
           }
         }
 
