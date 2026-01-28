@@ -10,6 +10,34 @@ A professional meeting speech timer with comprehensive features and beautiful in
 
 ---
 
+## 🚀 Quick Start (3 Steps)
+
+### 📥 Method 1: Online Use
+
+Visit online demo: [TimeKeeper Demo](https://guoqunabc.github.io/timekeeper/)
+
+> Note: Online version data is only saved in browser local storage
+
+### 🌐 Method 2: Download & Use (Recommended for Beginners)
+
+1. **Download Project**
+
+   ```bash
+   git clone https://github.com/guoqunabc/timekeeper.git
+   # or
+   git clone git@git.n.xiaomi.com:guoqun1/time_keeper.git
+   ```
+
+2. **Open File**
+   - Double-click `index.html` file
+
+3. **Start Using**
+   - Fill in speaker name and time
+   - Click "Start" button
+   - That's it! 🎉
+
+---
+
 ## 🎯 Main Features
 
 ### 1️⃣ **Basic Timer** - Core Feature 🌟
@@ -45,31 +73,7 @@ A professional meeting speech timer with comprehensive features and beautiful in
 
 ---
 
-## 🚀 Quick Start (3 Steps)
 
-### 📥 Method 1: Download & Use (Recommended for Beginners)
-
-1. **Download Project**
-   ```bash
-   git clone https://github.com/guoqunabc/timekeeper.git
-   # or
-   git clone git@git.n.xiaomi.com:guoqun1/time_keeper.git
-   ```
-
-2. **Open File**
-   - Double-click `index.html` file
-
-3. **Start Using**
-   - Fill in speaker name and time
-   - Click "Start" button
-   - That's it! 🎉
-
-### 🌐 Method 2: Online Use
-
-Visit online demo: [TimeKeeper Demo](https://guoqunabc.github.io/timekeeper/)
-> Note: Online version data is only saved in browser local storage
-
----
 
 ## 📖 Detailed User Guide
 

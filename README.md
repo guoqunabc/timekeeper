@@ -10,6 +10,34 @@
 
 ---
 
+## 🚀 快速开始（3 步上手）
+
+### 📥 方式一：在线使用
+
+访问在线演示：[TimeKeeper Demo](https://guoqunabc.github.io/timekeeper/)
+
+> 注：在线版本数据仅保存在浏览器本地
+
+### 🌐 方式二：下载使用（推荐新手）
+
+1. **下载项目**
+
+   ```bash
+   git clone https://github.com/guoqunabc/timekeeper.git
+   # 或
+   git clone git@git.n.xiaomi.com:guoqun1/time_keeper.git
+   ```
+
+2. **打开文件**
+   - 双击 `index.html` 文件
+
+3. **开始使用**
+   - 填写演讲者姓名和时间
+   - 点击"开始"按钮
+   - 就这么简单！ 🎉
+
+---
+
 ## 🎯 主要功能
 
 ### 1️⃣ **基础计时** - 核心功能 🌟
@@ -49,33 +77,7 @@
 
 ---
 
-## 🚀 快速开始（3 步上手）
 
-### 📥 方式一：下载使用（推荐新手）
-
-1. **下载项目**
-
-   ```bash
-   git clone https://github.com/guoqunabc/timekeeper.git
-   # 或
-   git clone git@git.n.xiaomi.com:guoqun1/time_keeper.git
-   ```
-
-2. **打开文件**
-   - 双击 `index.html` 文件
-
-3. **开始使用**
-   - 填写演讲者姓名和时间
-   - 点击"开始"按钮
-   - 就这么简单！ 🎉
-
-### 🌐 方式二：在线使用
-
-访问在线演示：[TimeKeeper Demo](https://guoqunabc.github.io/timekeeper/)
-
-> 注：在线版本数据仅保存在浏览器本地
-
----
 
 ## 📖 详细使用指南
 
